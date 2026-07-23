@@ -6,6 +6,9 @@ import BrandLogo from '@/components/BrandLogo';
 import RouteGuard from '@/components/RouteGuard';
 import { useAuth } from '@/components/Providers';
 import { uploadProfileImage } from '@/utils/upload-client';
+import Button from '@/components/ui/Button';
+import { Card, SubtlePanel } from '@/components/ui/Card';
+import { FieldHint, FieldLabel, TextArea, TextInput } from '@/components/ui/Field';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -99,7 +102,7 @@ export default function OnboardingPage() {
   return (
     <RouteGuard onboardingOnly>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)] lg:items-start">
-        <section className="glass-panel overflow-hidden p-0">
+        <Card as="section" className="overflow-hidden p-0">
           <div className="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 p-8 text-white">
             <BrandLogo compact />
             <p className="mt-8 text-xs font-semibold uppercase tracking-[0.26em] text-cyan-200">
@@ -123,23 +126,23 @@ export default function OnboardingPage() {
               <p className="mt-1 leading-6">Image files only. Video is blocked here by design.</p>
             </div>
           </div>
-        </section>
+        </Card>
 
-        <form onSubmit={handleSubmit} className="glass-panel space-y-5 p-6 md:p-8">
+        <Card as="form" onSubmit={handleSubmit} className="space-y-5 p-6 md:p-8">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">First name</label>
-              <input
-                className="input mt-2"
+              <FieldLabel>First name</FieldLabel>
+              <TextInput
+                className="mt-2"
                 value={form.firstName}
                 onChange={(e) => updateField('firstName', e.target.value)}
                 required
               />
             </div>
             <div>
-              <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Last name</label>
-              <input
-                className="input mt-2"
+              <FieldLabel>Last name</FieldLabel>
+              <TextInput
+                className="mt-2"
                 value={form.lastName}
                 onChange={(e) => updateField('lastName', e.target.value)}
                 required
@@ -148,19 +151,20 @@ export default function OnboardingPage() {
           </div>
 
           <div>
-            <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Username</label>
-            <input
-              className="input mt-2"
+            <FieldLabel>Username</FieldLabel>
+            <TextInput
+              className="mt-2"
               value={form.username}
               onChange={(e) => updateField('username', e.target.value)}
               required
             />
+            <FieldHint>Use 3-30 letters, numbers, dots, or underscores.</FieldHint>
           </div>
 
           <div>
-            <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Birthday</label>
-            <input
-              className="input mt-2"
+            <FieldLabel>Birthday</FieldLabel>
+            <TextInput
+              className="mt-2"
               type="date"
               value={form.birthday}
               onChange={(e) => updateField('birthday', e.target.value)}
@@ -169,30 +173,25 @@ export default function OnboardingPage() {
           </div>
 
           <div>
-            <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Bio</label>
-            <textarea
-              className="textarea mt-2"
+            <FieldLabel>Bio</FieldLabel>
+            <TextArea
+              className="mt-2"
               value={form.bio}
               onChange={(e) => updateField('bio', e.target.value)}
               placeholder="Tell other students what you study, create, or care about."
             />
+            <FieldHint>{form.bio.length}/255 characters</FieldHint>
           </div>
 
-          <div className="rounded-[28px] border border-dashed border-slate-300/80 bg-slate-50/80 p-5">
+          <SubtlePanel className="rounded-[28px] border-dashed border-slate-300/80 p-5">
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div>
-                <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Profile photo</label>
+                <FieldLabel>Profile photo</FieldLabel>
                 <p className="mt-1 text-sm text-slate-500">Upload a clear image from your device.</p>
               </div>
               <span className="badge">Image only</span>
             </div>
-            <input
-              className="input mt-2"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              required
-            />
+            <input className="input mt-2" type="file" accept="image/*" onChange={handleFileChange} required />
             {previewUrl && (
               <div className="mt-4 flex items-center gap-4 rounded-[24px] border border-slate-200 bg-white p-4">
                 <img
@@ -208,17 +207,17 @@ export default function OnboardingPage() {
                 </div>
               </div>
             )}
-          </div>
+          </SubtlePanel>
 
           {error && <p className="text-sm text-rose-500">{error}</p>}
 
           <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-2">
             <p className="text-xs text-slate-400">You can update your profile later by extending the profile settings flow.</p>
-            <button className="btn btn-primary" disabled={loading}>
+            <Button disabled={loading}>
               {loading ? 'Saving...' : 'Finish setup'}
-            </button>
+            </Button>
           </div>
-        </form>
+        </Card>
       </div>
     </RouteGuard>
   );
