@@ -1,25 +1,25 @@
 import { cn } from '@/utils/cn';
 
-export function Card({ className = '', children, ...props }) {
+export function Card({ as: Component = 'div', className = '', children, ...props }) {
   return (
-    <div className={cn('card', className)} {...props}>
+    <Component className={cn('card', className)} {...props}>
       {children}
-    </div>
+    </Component>
   );
 }
 
-export function Panel({ className = '', children, ...props }) {
+export function Panel({ as: Component = 'div', className = '', children, ...props }) {
   return (
-    <div className={cn('panel', className)} {...props}>
+    <Component className={cn('panel', className)} {...props}>
       {children}
-    </div>
+    </Component>
   );
 }
 
-export function SubtlePanel({ className = '', children, ...props }) {
+export function SubtlePanel({ as: Component = 'div', className = '', children, ...props }) {
   return (
-    <div className={cn('panel-subtle', className)} {...props}>
+    <Component className={cn('panel-subtle', className)} {...props}>
       {children}
-    </div>
+    </Component>
   );
 }
