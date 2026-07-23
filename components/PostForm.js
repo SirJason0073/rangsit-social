@@ -4,11 +4,13 @@ import { useEffect, useId, useState } from 'react';
 import { uploadPostMedia } from '@/utils/upload-client';
 import Button from './ui/Button';
 import { Card, SubtlePanel } from './ui/Card';
-import { FieldHint, FieldLabel, TextArea } from './ui/Field';
+import { FieldError, FieldHint, FieldLabel, TextArea, UploadControl } from './ui/Field';
 
 export default function PostForm({ initial = { content: '', media_url: null, media_type: null }, onSubmit, submitLabel }) {
   const contentId = useId();
   const mediaId = useId();
+  const hintId = useId();
+  const errorId = useId();
   const [content, setContent] = useState(initial.content || '');
   const [mediaFile, setMediaFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(initial.media_url || '');
@@ -28,6 +30,11 @@ export default function PostForm({ initial = { content: '', media_url: null, med
   function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+      setError('Choose an image or video file.');
+      e.target.value = '';
+      return;
+    }
     if (previewUrl && previewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(previewUrl);
     }
@@ -36,6 +43,7 @@ export default function PostForm({ initial = { content: '', media_url: null, med
     setPreviewUrl(url);
     setPreviewType(file.type.startsWith('video/') ? 'video' : 'image');
     setRemoveMedia(false);
+    setError('');
   }
 
   function handleRemoveMedia() {
@@ -95,9 +103,11 @@ export default function PostForm({ initial = { content: '', media_url: null, med
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="What is happening around campus today?"
+          aria-describedby={`${hintId}${error ? ` ${errorId}` : ''}`}
+          aria-invalid={!!error}
           required
         />
-        <FieldHint>Keep it clear and readable. One strong update works better than a long block.</FieldHint>
+        <FieldHint id={hintId}>Keep it clear and readable. One strong update works better than a long block.</FieldHint>
       </div>
 
       <SubtlePanel className="rounded-panel border-dashed border-border p-5">
@@ -110,13 +120,14 @@ export default function PostForm({ initial = { content: '', media_url: null, med
           </div>
           <span className="badge">Image or video</span>
         </div>
-        <input
+        <UploadControl
           id={mediaId}
           name="media"
-          className="input mt-4"
-          type="file"
           accept="image/*,video/*"
           onChange={handleFileChange}
+          className="mt-4"
+          label={mediaFile ? mediaFile.name : 'Choose an image or video'}
+          hint="One file per post. Preview it before publishing."
         />
         {previewUrl && (
           <div className="mt-4 space-y-3">
@@ -140,14 +151,12 @@ export default function PostForm({ initial = { content: '', media_url: null, med
         )}
       </SubtlePanel>
 
-      {error && <p role="alert" aria-live="polite" className="text-sm text-danger">{error}</p>}
+      <FieldError id={errorId} aria-live="polite">{error}</FieldError>
       <div className="flex items-center justify-between gap-4 border-t border-border pt-2">
         <p className="text-xs text-foreground-muted">
           Your post will appear in the campus feed as soon as it is published.
         </p>
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Saving...' : submitLabel}
-        </Button>
+        <Button type="submit" loading={loading} loadingLabel="Saving">{submitLabel}</Button>
       </div>
     </Card>
   );

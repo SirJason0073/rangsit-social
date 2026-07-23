@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from './Providers';
 import Button from './ui/Button';
+import { useToast } from './ui/Toast';
 
-export default function FollowButton({ targetId, initialFollowing, onChange }) {
+export default function FollowButton({ targetId, initialFollowing, onChange, size = 'md' }) {
   const { user } = useAuth();
   const router = useRouter();
+  const { notify } = useToast();
   const [following, setFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);
 
@@ -17,23 +19,27 @@ export default function FollowButton({ targetId, initialFollowing, onChange }) {
       return;
     }
     setLoading(true);
-    const res = await fetch('/api/follows', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: targetId })
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch('/api/follows', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: targetId })
+      });
+      if (!res.ok) throw new Error('Follow failed');
       const data = await res.json();
       setFollowing(data.following);
       onChange?.(data.following);
+    } catch {
+      notify('Could not update this follow.', { tone: 'danger' });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   if (user?.id === Number(targetId)) return null;
 
   return (
-    <Button type="button" onClick={toggleFollow} disabled={loading} aria-pressed={following} variant={following ? 'outline' : 'primary'}>
+    <Button type="button" onClick={toggleFollow} loading={loading} loadingLabel="Updating" aria-pressed={following} variant={following ? 'outline' : 'primary'} size={size}>
       {following ? 'Following' : 'Follow'}
     </Button>
   );

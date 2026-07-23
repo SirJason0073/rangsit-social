@@ -2,7 +2,7 @@
 
 import { useId, useState } from 'react';
 import Button from './ui/Button';
-import { TextInput } from './ui/Field';
+import { FieldError, TextInput } from './ui/Field';
 
 export default function CommentForm({ onSubmit }) {
   const inputId = useId();
@@ -22,9 +22,14 @@ export default function CommentForm({ onSubmit }) {
     }
     setError('');
     setLoading(true);
-    await onSubmit(content.trim());
-    setContent('');
-    setLoading(false);
+    try {
+      await onSubmit(content.trim());
+      setContent('');
+    } catch {
+      setError('Could not post your comment. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -39,11 +44,9 @@ export default function CommentForm({ onSubmit }) {
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write a comment..."
         />
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Posting...' : 'Post'}
-        </Button>
+        <Button type="submit" loading={loading} loadingLabel="Posting">Post</Button>
       </div>
-      {error ? <p role="alert" aria-live="polite" className="text-sm text-danger">{error}</p> : null}
+      <FieldError aria-live="polite">{error}</FieldError>
     </form>
   );
 }

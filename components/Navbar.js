@@ -39,7 +39,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface-elevated/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border bg-surface-elevated shadow-1">
       <div className="container flex min-h-header items-center justify-between gap-4 py-3">
         <BrandLogo />
 
@@ -62,9 +62,10 @@ export default function Navbar() {
                   <span className="block truncate text-xs text-foreground-muted">{user.profile_completed ? `@${user.username || 'student'}` : 'Finish profile'}</span>
                 </span>
               </DropdownTrigger>
-              <DropdownContent>
+              <DropdownContent className="mt-1">
                 <DropdownItem onSelect={() => router.push(user.profile_completed ? `/profile/${user.id}` : '/onboarding')}><Icon name="user" />Profile</DropdownItem>
                 {user.profile_completed ? <DropdownItem onSelect={() => router.push('/profile/edit')}><Icon name="user" />Edit profile</DropdownItem> : null}
+                <div className="my-1 border-t border-border" role="separator" />
                 <DropdownItem onSelect={handleLogout} className="text-danger hover:bg-danger-subtle hover:text-danger"><Icon name="logout" />Log out</DropdownItem>
               </DropdownContent>
             </Dropdown>

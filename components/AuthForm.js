@@ -1,10 +1,9 @@
 'use client';
 
 import { useId, useMemo, useState } from 'react';
-import Link from 'next/link';
 import Button from './ui/Button';
 import { Card, SubtlePanel } from './ui/Card';
-import { FieldHint, FieldLabel, TextInput } from './ui/Field';
+import { Checkbox, FieldHint, FieldLabel, TextInput } from './ui/Field';
 
 export default function AuthForm({ type, onSubmit, footer }) {
   const emailId = useId();
@@ -124,19 +123,15 @@ export default function AuthForm({ type, onSubmit, footer }) {
         </div>
       </div>
 
-      {type === 'login' ? <div className="flex items-center justify-between gap-4 text-sm">
-        <label htmlFor={rememberId} className="inline-flex items-center gap-2 text-foreground-secondary">
-          <input
+      {type === 'login' ? <div className="text-sm">
+          <Checkbox
             id={rememberId}
             name="rememberMe"
-            type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="h-4 w-4 rounded border-border text-brand-700 focus:ring-brand-300"
+            label="Remember me"
+            description="Keep this session available on this device."
           />
-          Remember me
-        </label>
-        <FieldHint>Keep this session available on this device.</FieldHint>
       </div> : null}
 
       {error ? (
@@ -145,8 +140,8 @@ export default function AuthForm({ type, onSubmit, footer }) {
         </SubtlePanel>
       ) : null}
 
-      <Button type="submit" className="h-12 w-full text-base" disabled={loading}>
-        {loading ? 'Please wait...' : type === 'signup' ? 'Sign up' : 'Log in'}
+      <Button type="submit" className="h-12 w-full text-base" loading={loading} loadingLabel="Please wait">
+        {type === 'signup' ? 'Sign up' : 'Log in'}
       </Button>
 
       {footer ? <div className="border-t border-border pt-4">{footer}</div> : null}

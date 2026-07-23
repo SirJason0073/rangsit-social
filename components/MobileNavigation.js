@@ -18,10 +18,11 @@ export default function MobileNavigation() {
   ];
 
   return (
-    <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface-elevated/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-2 backdrop-blur-xl lg:hidden">
+    <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface-elevated px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-2 lg:hidden">
       <div className="mx-auto grid max-w-lg grid-flow-col auto-cols-fr">
         {items.map((item) => (
-          <Link key={item.href} href={item.href} aria-current={item.active ? 'page' : undefined} className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-2 text-xs font-semibold transition duration-fast ${item.active ? 'bg-brand-subtle text-brand-strong' : 'text-foreground-muted hover:bg-surface-muted hover:text-foreground'}`}>
+          <Link key={item.href} href={item.href} aria-current={item.active ? 'page' : undefined} className={`relative flex min-h-14 flex-col items-center justify-center gap-1 rounded-control px-2 text-xs font-semibold transition duration-fast ${item.active ? 'text-brand-strong' : 'text-foreground-muted hover:bg-surface-muted hover:text-foreground'}`}>
+            {item.active ? <span aria-hidden="true" className="absolute top-0 h-0.5 w-8 rounded-full bg-brand" /> : null}
             <Icon name={item.icon} />
             <span>{item.label}</span>
           </Link>

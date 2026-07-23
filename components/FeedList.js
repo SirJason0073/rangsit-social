@@ -7,6 +7,7 @@ import Loading from './Loading';
 import EmptyState from './EmptyState';
 import Button from './ui/Button';
 import { Card } from './ui/Card';
+import ErrorState from './ui/ErrorState';
 
 export default function FeedList({
   endpoint,
@@ -19,17 +20,25 @@ export default function FeedList({
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [error, setError] = useState('');
 
   const resolvedEndpoint = endpoint || (filterUserId ? `/api/users/${filterUserId}` : '/api/posts');
 
   async function loadPosts(nextPage = 1, append = false) {
-    const res = await fetch(`${resolvedEndpoint}?page=${nextPage}&limit=5`);
-    const data = await res.json();
-    setPosts((prev) => (append ? [...prev, ...(data.posts || [])] : (data.posts || [])));
-    setHasMore(!!data.pagination?.hasMore);
-    setPage(nextPage);
-    setLoading(false);
-    setLoadingMore(false);
+    try {
+      setError('');
+      const res = await fetch(`${resolvedEndpoint}?page=${nextPage}&limit=5`);
+      if (!res.ok) throw new Error('Posts failed');
+      const data = await res.json();
+      setPosts((prev) => (append ? [...prev, ...(data.posts || [])] : (data.posts || [])));
+      setHasMore(!!data.pagination?.hasMore);
+      setPage(nextPage);
+    } catch {
+      setError('Posts could not be loaded. Check your connection and try again.');
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   }
 
   useEffect(() => {
@@ -48,16 +57,14 @@ export default function FeedList({
 
   if (loading) return <Loading label="Loading posts..." />;
 
+  if (error && !posts.length) return <ErrorState title="Unable to load posts" description={error} onRetry={() => { setLoading(true); loadPosts(1, false); }} />;
+
   if (!posts.length) {
     return (
       <EmptyState
         title={emptyTitle}
         description={emptyDescription}
-        action={
-          <Link href="/posts/new">
-            <Button>Create post</Button>
-          </Link>
-        }
+        action={<Link href="/posts/new" className="btn btn-primary">Create post</Link>}
       />
     );
   }
@@ -73,9 +80,7 @@ export default function FeedList({
                 Share a campus update, photo, or short video with your network.
               </p>
             </div>
-            <Link href="/posts/new" className="md:shrink-0">
-              <Button className="w-full md:w-auto">Create post</Button>
-            </Link>
+            <Link href="/posts/new" className="btn btn-primary w-full md:w-auto md:shrink-0">Create post</Link>
           </div>
         </Card>
       ) : null}
@@ -85,11 +90,10 @@ export default function FeedList({
       ))}
       {hasMore ? (
         <div className="flex justify-center pt-2">
-          <Button onClick={handleLoadMore} disabled={loadingMore} variant="outline">
-            {loadingMore ? 'Loading...' : 'Load more'}
-          </Button>
+          <Button onClick={handleLoadMore} loading={loadingMore} loadingLabel="Loading" variant="outline">Load more</Button>
         </div>
       ) : null}
+      {error && posts.length ? <p role="status" className="text-center text-sm text-danger">{error}</p> : null}
     </div>
   );
 }

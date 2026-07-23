@@ -1,8 +1,9 @@
 'use client';
 
 import { cloneElement, isValidElement, useId } from 'react';
+import { cn } from '@/utils/cn';
 
-export default function Tooltip({ label, children }) {
+export default function Tooltip({ label, children, side = 'bottom' }) {
   const id = useId();
   const trigger = isValidElement(children)
     ? cloneElement(children, { 'aria-describedby': id })
@@ -10,7 +11,7 @@ export default function Tooltip({ label, children }) {
   return (
     <span className="group relative inline-flex">
       {trigger}
-      <span id={id} role="tooltip" className="pointer-events-none absolute left-1/2 top-[calc(100%+0.5rem)] z-50 hidden -translate-x-1/2 whitespace-nowrap rounded-control bg-surface-inverse px-2.5 py-1.5 text-xs text-foreground-inverse shadow-2 group-hover:block group-focus-within:block">
+      <span id={id} role="tooltip" className={cn('pointer-events-none absolute left-1/2 z-50 hidden -translate-x-1/2 whitespace-nowrap rounded-control bg-surface-inverse px-2.5 py-1.5 text-xs text-foreground-inverse shadow-2 group-hover:block group-focus-within:block', side === 'top' ? 'bottom-[calc(100%+0.5rem)]' : 'top-[calc(100%+0.5rem)]')}>
         {label}
       </span>
     </span>

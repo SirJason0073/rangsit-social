@@ -3,14 +3,14 @@ import Link from 'next/link';
 
 export default function BrandLogo({ compact = false, dark = false }) {
   return (
-    <Link href="/feed" className="group inline-flex items-center gap-3">
-      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-card bg-surface-inverse shadow-2 ring-1 ring-border">
+    <Link href="/feed" className="group inline-flex items-center gap-3 rounded-control" aria-label="Rangsit Social home">
+      <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-control bg-surface-inverse ring-1 ring-border">
         <Image
           src="/rangsit-logo.png"
           alt="Rangsit University"
           width={34}
           height={34}
-          className="h-8 w-8 object-contain transition duration-300 group-hover:scale-105"
+          className="h-8 w-8 object-contain"
           priority
         />
       </div>

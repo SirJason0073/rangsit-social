@@ -1,28 +1,31 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { formatDate } from '@/utils/format';
 import CommentForm from './CommentForm';
+import CommentCard from './CommentCard';
 import { useAuth } from './Providers';
 import { Card } from './ui/Card';
 import { Skeleton, SkeletonText } from './ui/Skeleton';
-
-function displayName(comment) {
-  const full = [comment.first_name, comment.last_name].filter(Boolean).join(' ');
-  return full || comment.username || 'User';
-}
+import ErrorState from './ui/ErrorState';
 
 export default function CommentList({ postId }) {
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   async function loadComments() {
-    const res = await fetch(`/api/posts/${postId}/comments`);
-    const data = await res.json();
-    setComments(data.comments || []);
-    setLoading(false);
+    try {
+      setError('');
+      const res = await fetch(`/api/posts/${postId}/comments`);
+      if (!res.ok) throw new Error('Comments failed');
+      const data = await res.json();
+      setComments(data.comments || []);
+    } catch {
+      setError('Comments could not be loaded.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -35,16 +38,15 @@ export default function CommentList({ postId }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content })
     });
-    if (res.ok) {
-      loadComments();
-    }
+    if (!res.ok) throw new Error('Comment failed');
+    await loadComments();
   }
 
   return (
     <Card as="section" className="p-6">
       <div className="flex items-center justify-between">
         <h3 className="section-title">Comments</h3>
-        <span className="badge">{comments.length}</span>
+        <span className="badge" aria-label={`${comments.length} comments`}>{comments.length}</span>
       </div>
 
       {user ? (
@@ -66,35 +68,14 @@ export default function CommentList({ postId }) {
             <SkeletonText lines={2} className="mt-3" />
           </div>
         </div>
+      ) : error ? (
+        <div className="mt-5"><ErrorState compact title="Unable to load comments" description={error} onRetry={() => { setLoading(true); loadComments(); }} /></div>
       ) : comments.length ? (
-        <div className="mt-5 space-y-4">
-          {comments.map((comment) => (
-            <div key={comment.id} className="rounded-panel border border-border bg-surface-elevated/80 p-4">
-              <div className="flex items-center gap-3">
-                {comment.user_avatar ? (
-                  <Image
-                    src={comment.user_avatar}
-                    alt={displayName(comment)}
-                    width={32}
-                    height={32}
-                    className="h-8 w-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
-                    {displayName(comment).slice(0, 1).toUpperCase()}
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm font-medium text-foreground">{displayName(comment)}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-foreground-muted">{formatDate(comment.created_at)}</p>
-                </div>
-              </div>
-              <p className="mt-3 whitespace-pre-line text-sm leading-6 text-foreground-secondary">{comment.content}</p>
-            </div>
-          ))}
+        <div className="mt-5 border-t border-border">
+          {comments.map((comment) => <CommentCard key={comment.id} comment={comment} />)}
         </div>
       ) : (
-        <p className="mt-4 text-sm text-foreground-muted">No comments yet. Be the first!</p>
+        <div className="mt-5 rounded-card bg-surface-muted p-5 text-center"><p className="text-sm font-medium text-foreground">No comments yet</p><p className="mt-1 text-xs text-foreground-muted">Start the conversation with a thoughtful reply.</p></div>
       )}
     </Card>
   );

@@ -6,7 +6,7 @@ export default function GuestShell({ children }) {
   return (
     <div className="app-shell">
       <a href="#main-content" className="skip-link">Skip to content</a>
-      <header className="border-b border-border bg-surface-elevated/95 backdrop-blur-xl">
+      <header className="border-b border-border bg-surface-elevated shadow-1">
         <div className="container flex min-h-header items-center justify-between gap-4 py-3">
           <BrandLogo />
           <div className="flex items-center gap-2">
