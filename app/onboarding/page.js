@@ -213,7 +213,7 @@ export default function OnboardingPage() {
 
           <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-2">
             <p className="text-xs text-slate-400">You can update your profile later by extending the profile settings flow.</p>
-            <Button disabled={loading}>
+            <Button type="submit" disabled={loading}>
               {loading ? 'Saving...' : 'Finish setup'}
             </Button>
           </div>

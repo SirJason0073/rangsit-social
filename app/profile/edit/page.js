@@ -182,7 +182,7 @@ export default function ProfileEditPage() {
 
           <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-2">
             <p className="text-xs text-slate-400">Profile updates are applied immediately after saving.</p>
-            <Button disabled={loading}>
+            <Button type="submit" disabled={loading}>
               {loading ? 'Saving...' : 'Save changes'}
             </Button>
           </div>

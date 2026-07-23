@@ -60,6 +60,15 @@ export async function POST(req) {
 
     return NextResponse.json({ message: 'Profile completed.' });
   } catch (err) {
+    console.error('[api/users/onboarding] POST failed', err);
+
+    if (process.env.NODE_ENV !== 'production') {
+      return NextResponse.json(
+        { message: err?.sqlMessage || err?.message || 'Failed to complete onboarding.' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({ message: 'Failed to complete onboarding.' }, { status: 500 });
   }
 }

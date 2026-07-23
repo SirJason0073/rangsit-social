@@ -35,7 +35,7 @@ export default function CommentForm({ onSubmit }) {
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write a comment..."
         />
-        <Button disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? 'Posting...' : 'Post'}
         </Button>
       </div>
