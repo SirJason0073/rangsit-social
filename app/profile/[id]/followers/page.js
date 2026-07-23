@@ -7,6 +7,8 @@ import Loading from '@/components/Loading';
 import EmptyState from '@/components/EmptyState';
 import RouteGuard from '@/components/RouteGuard';
 import UserListItem from '@/components/UserListItem';
+import Button from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 export default function FollowersPage() {
   const params = useParams();
@@ -53,7 +55,7 @@ export default function FollowersPage() {
   return (
     <RouteGuard requireProfile>
       <div className="space-y-6">
-        <div className="glass-panel p-6">
+        <Card className="p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-indigo-600">Connections</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
             {profile?.first_name || profile?.username || 'User'}'s followers
@@ -64,7 +66,7 @@ export default function FollowersPage() {
           <Link href={`/profile/${params.id}`} className="link mt-4 inline-flex text-sm">
             Back to profile
           </Link>
-        </div>
+        </Card>
 
         {users.length ? (
           <div className="space-y-4">
@@ -73,9 +75,9 @@ export default function FollowersPage() {
             ))}
             {hasMore ? (
               <div className="flex justify-center pt-2">
-                <button onClick={handleLoadMore} disabled={loadingMore} className="btn btn-outline">
+                <Button onClick={handleLoadMore} disabled={loadingMore} variant="outline">
                   {loadingMore ? 'Loading...' : 'Load more'}
-                </button>
+                </Button>
               </div>
             ) : null}
           </div>

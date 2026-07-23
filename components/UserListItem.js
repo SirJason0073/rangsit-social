@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import FollowButton from './FollowButton';
+import { Card } from './ui/Card';
 
 function displayName(user) {
   const full = [user.first_name, user.last_name].filter(Boolean).join(' ');
@@ -11,7 +12,7 @@ function displayName(user) {
 
 export default function UserListItem({ user }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200/70 bg-white/80 p-4 shadow-sm shadow-slate-200/60 backdrop-blur">
+    <Card className="flex items-center justify-between gap-4 p-4">
       <Link href={`/profile/${user.id}`} className="flex min-w-0 items-center gap-4">
         {user.avatar ? (
           <Image
@@ -33,6 +34,6 @@ export default function UserListItem({ user }) {
         </div>
       </Link>
       <FollowButton targetId={user.id} initialFollowing={!!user.isFollowing} />
-    </div>
+    </Card>
   );
 }

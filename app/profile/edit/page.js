@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import RouteGuard from '@/components/RouteGuard';
 import { useAuth } from '@/components/Providers';
 import { uploadProfileImage } from '@/utils/upload-client';
+import Button from '@/components/ui/Button';
+import { Card, SubtlePanel } from '@/components/ui/Card';
+import { FieldHint, FieldLabel, TextArea, TextInput } from '@/components/ui/Field';
 
 function validateProfile(form, hasAvatar) {
   if (!form.firstName.trim()) return 'First name is required.';
@@ -113,50 +116,52 @@ export default function ProfileEditPage() {
   return (
     <RouteGuard requireProfile>
       <div className="space-y-6">
-        <div className="glass-panel p-6 md:p-7">
+        <Card className="p-6 md:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-600">Profile</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Edit your profile</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
             Keep your campus identity current across posts, comments, follows, and profile lists.
           </p>
-        </div>
+        </Card>
 
-        <form onSubmit={handleSubmit} className="glass-panel space-y-5 p-6 md:p-8">
+        <Card as="form" onSubmit={handleSubmit} className="space-y-5 p-6 md:p-8">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">First name</label>
-              <input className="input mt-2" value={form.firstName} onChange={(e) => updateField('firstName', e.target.value)} />
+              <FieldLabel>First name</FieldLabel>
+              <TextInput className="mt-2" value={form.firstName} onChange={(e) => updateField('firstName', e.target.value)} />
             </div>
             <div>
-              <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Last name</label>
-              <input className="input mt-2" value={form.lastName} onChange={(e) => updateField('lastName', e.target.value)} />
+              <FieldLabel>Last name</FieldLabel>
+              <TextInput className="mt-2" value={form.lastName} onChange={(e) => updateField('lastName', e.target.value)} />
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Username</label>
-            <input className="input mt-2" value={form.username} onChange={(e) => updateField('username', e.target.value)} />
+            <FieldLabel>Username</FieldLabel>
+            <TextInput className="mt-2" value={form.username} onChange={(e) => updateField('username', e.target.value)} />
+            <FieldHint>Use 3-30 letters, numbers, dots, or underscores.</FieldHint>
           </div>
 
           <div>
-            <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Birthday</label>
-            <input className="input mt-2" type="date" value={form.birthday} onChange={(e) => updateField('birthday', e.target.value)} />
+            <FieldLabel>Birthday</FieldLabel>
+            <TextInput className="mt-2" type="date" value={form.birthday} onChange={(e) => updateField('birthday', e.target.value)} />
           </div>
 
           <div>
-            <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Bio</label>
-            <textarea
-              className="textarea mt-2"
+            <FieldLabel>Bio</FieldLabel>
+            <TextArea
+              className="mt-2"
               value={form.bio}
               onChange={(e) => updateField('bio', e.target.value)}
               placeholder="Tell other students what you study, create, or care about."
             />
+            <FieldHint>{form.bio.length}/255 characters</FieldHint>
           </div>
 
-          <div className="rounded-[28px] border border-dashed border-slate-300/80 bg-slate-50/80 p-5">
+          <SubtlePanel className="rounded-[28px] border-dashed border-slate-300/80 p-5">
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div>
-                <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Profile photo</label>
+                <FieldLabel>Profile photo</FieldLabel>
                 <p className="mt-1 text-sm text-slate-500">Upload a new image only if you want to replace the current one.</p>
               </div>
               <span className="badge">Image only</span>
@@ -171,17 +176,17 @@ export default function ProfileEditPage() {
                 </div>
               </div>
             ) : null}
-          </div>
+          </SubtlePanel>
 
           {error ? <p className="text-sm text-rose-500">{error}</p> : null}
 
           <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-2">
             <p className="text-xs text-slate-400">Profile updates are applied immediately after saving.</p>
-            <button className="btn btn-primary" disabled={loading}>
+            <Button disabled={loading}>
               {loading ? 'Saving...' : 'Save changes'}
-            </button>
+            </Button>
           </div>
-        </form>
+        </Card>
       </div>
     </RouteGuard>
   );
