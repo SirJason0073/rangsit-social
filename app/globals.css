@@ -4,88 +4,230 @@
 
 :root {
   color-scheme: light;
-  --bg: #eef4fa;
-  --surface: rgba(251, 253, 255, 0.88);
-  --surface-strong: #f9fbfe;
+  --bg: #edf3fb;
+  --bg-strong: #e6eef8;
+  --surface: rgba(255, 255, 255, 0.8);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --surface-muted: rgba(243, 247, 252, 0.92);
   --text: #0f172a;
+  --text-soft: #334155;
   --muted: #64748b;
-  --line: rgba(148, 163, 184, 0.24);
+  --line: rgba(148, 163, 184, 0.22);
+  --line-strong: rgba(148, 163, 184, 0.32);
   --brand-primary: #0077c8;
   --brand-secondary: #29a8e0;
   --brand-primary-dark: #0b5ea8;
+  --brand-indigo: #4f46e5;
   --brand-bg: #eaf3fb;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --shadow-soft: 0 20px 50px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 16px 32px rgba(15, 23, 42, 0.06);
+  --shadow-strong: 0 24px 64px rgba(15, 23, 42, 0.12);
+  --radius-card: 28px;
+  --radius-panel: 32px;
+  --radius-pill: 999px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #09111f;
+    --bg-strong: #0f172a;
+    --surface: rgba(15, 23, 42, 0.82);
+    --surface-strong: rgba(15, 23, 42, 0.94);
+    --surface-muted: rgba(30, 41, 59, 0.82);
+    --text: #e2e8f0;
+    --text-soft: #cbd5e1;
+    --muted: #94a3b8;
+    --line: rgba(148, 163, 184, 0.16);
+    --line-strong: rgba(148, 163, 184, 0.24);
+    --shadow-soft: 0 22px 60px rgba(2, 6, 23, 0.34);
+    --shadow-card: 0 18px 40px rgba(2, 6, 23, 0.28);
+    --shadow-strong: 0 26px 72px rgba(2, 6, 23, 0.4);
+  }
 }
 
 html {
   min-height: 100%;
   background:
-    radial-gradient(circle at top left, rgba(0, 119, 200, 0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(41, 168, 224, 0.12), transparent 24%),
-    linear-gradient(180deg, #edf4fb 0%, #f5f8fc 48%, #edf3f9 100%);
+    radial-gradient(circle at top left, rgba(0, 119, 200, 0.14), transparent 30%),
+    radial-gradient(circle at top right, rgba(79, 70, 229, 0.09), transparent 24%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-strong) 100%);
+  scroll-behavior: smooth;
 }
 
 body {
-  @apply text-slate-900;
+  @apply antialiased;
   font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background: transparent;
+  color: var(--text);
 }
 
 .container {
   @apply mx-auto w-full max-w-[1720px] px-4 md:px-6 xl:px-8;
 }
 
+.app-shell {
+  @apply min-h-screen;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(0, 119, 200, 0.06), transparent 26%),
+    radial-gradient(circle at 100% 0%, rgba(79, 70, 229, 0.06), transparent 24%);
+}
+
 .link {
-  @apply text-brand-600 hover:text-brand-700 transition;
+  @apply transition;
+  color: var(--brand-primary-dark);
 }
 
 .btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-200;
+  @apply inline-flex items-center justify-center gap-2 whitespace-nowrap px-4 py-2.5 text-sm font-semibold transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60;
+  border-radius: var(--radius-pill);
 }
 
 .btn-primary {
-  @apply bg-gradient-to-r from-brand-800 via-brand-700 to-sky-500 text-white shadow-lg shadow-brand-900/20 hover:brightness-105;
+  @apply text-white shadow-lg shadow-brand-900/20 hover:brightness-105;
+  background-image: linear-gradient(135deg, var(--brand-primary-dark), var(--brand-indigo), var(--brand-secondary));
 }
 
 .btn-outline {
-  @apply border border-slate-200/80 bg-white/85 text-slate-700 backdrop-blur hover:border-brand-300 hover:text-brand-700;
+  @apply border backdrop-blur hover:border-brand-300 hover:text-brand-700;
+  border-color: var(--line-strong);
+  background: var(--surface-strong);
+  color: var(--text-soft);
+}
+
+.btn-ghost {
+  @apply hover:bg-white/10;
+  color: var(--text-soft);
 }
 
 .card {
-  @apply rounded-[28px] border border-white/60 bg-white/80 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-xl;
+  @apply border backdrop-blur-xl;
+  border-radius: var(--radius-card);
+  border-color: rgba(255, 255, 255, 0.6);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
 }
 
 .input {
-  @apply w-full rounded-2xl border border-slate-200/90 bg-white/95 px-4 py-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-200;
+  @apply w-full rounded-2xl border px-4 py-3 text-sm shadow-sm transition placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-200;
+  border-color: var(--line);
+  background: var(--surface-strong);
+  color: var(--text);
 }
 
 .textarea {
-  @apply min-h-[120px] w-full rounded-2xl border border-slate-200/90 bg-white/95 px-4 py-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-200;
+  @apply min-h-[120px] w-full rounded-2xl border px-4 py-3 text-sm shadow-sm transition placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-200;
+  border-color: var(--line);
+  background: var(--surface-strong);
+  color: var(--text);
 }
 
 .badge {
-  @apply inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700;
+  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium;
+  background: rgba(0, 119, 200, 0.1);
+  color: var(--brand-primary-dark);
 }
 
 .glass-panel {
-  @apply rounded-[32px] border border-white/60 bg-white/70 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-2xl;
+  @apply border backdrop-blur-2xl;
+  border-radius: var(--radius-panel);
+  border-color: rgba(255, 255, 255, 0.6);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.66));
+  box-shadow: var(--shadow-soft);
+}
+
+.panel {
+  @apply border backdrop-blur-xl;
+  border-radius: var(--radius-card);
+  border-color: var(--line);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-card);
+}
+
+.panel-subtle {
+  @apply border backdrop-blur-xl;
+  border-radius: var(--radius-card);
+  border-color: var(--line);
+  background: var(--surface-muted);
+  box-shadow: var(--shadow-card);
 }
 
 .metric-link {
-  @apply inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/80 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-brand-300 hover:text-brand-700;
+  @apply inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition hover:border-brand-300 hover:text-brand-700;
+  border-color: var(--line);
+  background: var(--surface-strong);
+  color: var(--text-soft);
 }
 
 .section-title {
-  @apply text-xl font-semibold tracking-tight text-slate-950;
+  @apply text-xl font-semibold tracking-tight;
+  color: var(--text);
 }
 
 .sidebar-card {
-  @apply rounded-[28px] border border-white/70 bg-[rgba(249,251,254,0.92)] p-5 shadow-[0_16px_36px_rgba(15,23,42,0.06)];
+  @apply border p-5 backdrop-blur-xl;
+  border-radius: var(--radius-card);
+  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-card);
 }
 
 .nav-pill-active {
-  @apply rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white;
+  @apply rounded-full border bg-white/10 px-4 py-2 text-sm font-semibold text-white;
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 .nav-pill {
   @apply rounded-full px-4 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white;
+}
+
+.field-label {
+  @apply text-sm font-medium;
+  color: var(--text-soft);
+}
+
+.field-hint {
+  @apply text-xs;
+  color: var(--muted);
+}
+
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.shadow-strong {
+  box-shadow: var(--shadow-strong);
+}
+
+.skeleton {
+  @apply relative overflow-hidden rounded-2xl;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.12),
+    rgba(148, 163, 184, 0.22),
+    rgba(148, 163, 184, 0.12)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .skeleton {
+    animation: none;
+  }
 }

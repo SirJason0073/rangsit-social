@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <Providers>
-          <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100">
+          <div className="app-shell">
             <Navbar />
             <main className="container py-6 md:py-8">{children}</main>
           </div>
