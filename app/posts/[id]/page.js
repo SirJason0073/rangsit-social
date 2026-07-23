@@ -33,13 +33,13 @@ export default function PostDetailPage() {
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-6">
           <Card className="p-6">
-          <Link href="/feed" className="link inline-flex text-sm">
-            Back to feed
-          </Link>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Post detail</h1>
-          <p className="mt-2 text-sm text-slate-500">
-            View the full conversation, media, and engagement around this post.
-          </p>
+            <Link href="/feed" className="link inline-flex text-sm">
+              Back to feed
+            </Link>
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Post detail</h1>
+            <p className="mt-2 text-sm text-slate-500">
+              View the full conversation, media, and engagement around this post.
+            </p>
           </Card>
           <PostCard post={post} showActions />
           <CommentList postId={post.id} />

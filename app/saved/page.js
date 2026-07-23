@@ -8,11 +8,11 @@ export default function SavedPostsPage() {
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-6">
           <Card className="p-6 md:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-600">Saved</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Saved posts</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-            Keep the posts you want to revisit later in one place.
-          </p>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-600">Saved</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Saved posts</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+              Keep the posts you want to revisit later in one place.
+            </p>
           </Card>
           <FeedList
             endpoint="/api/saved-posts"
