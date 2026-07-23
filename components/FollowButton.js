@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from './Providers';
+import Button from './ui/Button';
 
 export default function FollowButton({ targetId, initialFollowing, onChange }) {
   const { user } = useAuth();
@@ -32,8 +33,8 @@ export default function FollowButton({ targetId, initialFollowing, onChange }) {
   if (user?.id === Number(targetId)) return null;
 
   return (
-    <button onClick={toggleFollow} disabled={loading} className={following ? 'btn btn-outline' : 'btn btn-primary'}>
+    <Button type="button" onClick={toggleFollow} disabled={loading} variant={following ? 'outline' : 'primary'}>
       {following ? 'Following' : 'Follow'}
-    </button>
+    </Button>
   );
 }

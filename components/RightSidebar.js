@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from './Providers';
 import FollowButton from './FollowButton';
+import { Card } from './ui/Card';
 
 const trends = ['#RangsitLife', '#CampusEvents', '#StudySession', '#StudentCreators', '#RsuUpdates'];
 const activity = ['New follows this week', 'Comments on your recent post', 'Student event signups rising'];
@@ -18,25 +19,30 @@ export default function RightSidebar() {
   const { user } = useAuth();
   const [suggestions, setSuggestions] = useState([]);
   const [stats, setStats] = useState({ posts: 0, followers: 0, following: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadSidebarData() {
       if (!user?.id || !user.profile_completed) return;
 
-      const [suggestionsRes, profileRes] = await Promise.all([
-        fetch('/api/users/suggestions'),
-        fetch(`/api/users/${user.id}`)
-      ]);
+      try {
+        const [suggestionsRes, profileRes] = await Promise.all([
+          fetch('/api/users/suggestions'),
+          fetch(`/api/users/${user.id}`)
+        ]);
 
-      const suggestionsData = await suggestionsRes.json();
-      const profileData = await profileRes.json();
+        const suggestionsData = await suggestionsRes.json();
+        const profileData = await profileRes.json();
 
-      setSuggestions(suggestionsData.users || []);
-      setStats({
-        posts: profileData.posts?.length || 0,
-        followers: profileData.stats?.followers || 0,
-        following: profileData.stats?.following || 0
-      });
+        setSuggestions(suggestionsData.users || []);
+        setStats({
+          posts: profileData.posts?.length || 0,
+          followers: profileData.stats?.followers || 0,
+          following: profileData.stats?.following || 0
+        });
+      } finally {
+        setLoading(false);
+      }
     }
 
     loadSidebarData();
@@ -46,7 +52,7 @@ export default function RightSidebar() {
 
   return (
     <div className="space-y-5">
-      <section className="sidebar-card">
+      <Card as="section" className="p-5">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Who to follow</h2>
           <Link href={user ? `/profile/${user.id}/following` : '/feed'} className="text-xs font-medium text-brand-700 hover:text-brand-800">
@@ -54,7 +60,9 @@ export default function RightSidebar() {
           </Link>
         </div>
         <div className="mt-4 space-y-4">
-          {visibleSuggestions.length ? (
+          {loading ? (
+            <p className="text-sm text-slate-500">Loading suggestions...</p>
+          ) : visibleSuggestions.length ? (
             visibleSuggestions.map((suggestion) => (
               <div key={suggestion.id} className="flex items-center justify-between gap-3">
                 <Link href={`/profile/${suggestion.id}`} className="flex min-w-0 items-center gap-3">
@@ -83,9 +91,9 @@ export default function RightSidebar() {
             <p className="text-sm text-slate-500">No suggestions right now.</p>
           )}
         </div>
-      </section>
+      </Card>
 
-      <section className="sidebar-card">
+      <Card as="section" className="p-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Campus trends</h2>
         <div className="mt-4 space-y-3">
           {trends.map((trend) => (
@@ -95,9 +103,9 @@ export default function RightSidebar() {
             </div>
           ))}
         </div>
-      </section>
+      </Card>
 
-      <section className="sidebar-card">
+      <Card as="section" className="p-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Quick stats</h2>
         <div className="mt-4 grid grid-cols-3 gap-3">
           <div className="rounded-2xl bg-slate-50 px-3 py-4 text-center">
@@ -113,9 +121,9 @@ export default function RightSidebar() {
             <p className="mt-1 text-xs text-slate-500">Following</p>
           </div>
         </div>
-      </section>
+      </Card>
 
-      <section className="sidebar-card">
+      <Card as="section" className="p-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Recent activity</h2>
         <div className="mt-4 space-y-3">
           {activity.map((item) => (
@@ -125,7 +133,7 @@ export default function RightSidebar() {
             </div>
           ))}
         </div>
-      </section>
+      </Card>
     </div>
   );
 }

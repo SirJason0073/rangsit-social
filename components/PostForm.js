@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { uploadPostMedia } from '@/utils/upload-client';
+import Button from './ui/Button';
+import { Card, SubtlePanel } from './ui/Card';
+import { FieldHint, FieldLabel, TextArea } from './ui/Field';
 
 export default function PostForm({ initial = { content: '', media_url: null, media_type: null }, onSubmit, submitLabel }) {
   const [content, setContent] = useState(initial.content || '');
@@ -78,25 +81,25 @@ export default function PostForm({ initial = { content: '', media_url: null, med
   }
 
   return (
-    <form onSubmit={handleSubmit} className="glass-panel space-y-6 p-6 md:p-7">
+    <Card as="form" onSubmit={handleSubmit} className="space-y-6 p-6 md:p-7">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-4">
-          <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Post content</label>
+          <FieldLabel>Post content</FieldLabel>
           <span className="text-xs text-slate-400">{content.length}/5000</span>
         </div>
-        <textarea
-          className="textarea mt-2"
+        <TextArea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="What is happening around campus today?"
           required
         />
+        <FieldHint>Keep it clear and readable. One strong update works better than a long block.</FieldHint>
       </div>
 
-      <div className="rounded-[28px] border border-dashed border-slate-300/80 bg-slate-50/80 p-5">
+      <SubtlePanel className="rounded-[28px] border-dashed border-slate-300/80 p-5">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <label className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Media upload</label>
+            <FieldLabel>Media upload</FieldLabel>
             <p className="mt-1 text-sm text-slate-500">
               Add one image or video. This keeps the composer simple and reliable for the demo.
             </p>
@@ -124,22 +127,22 @@ export default function PostForm({ initial = { content: '', media_url: null, med
                 className="w-full max-h-96 rounded-[24px] border border-slate-200 object-cover"
               />
             )}
-            <button type="button" onClick={handleRemoveMedia} className="text-sm font-medium text-rose-500">
+            <Button type="button" onClick={handleRemoveMedia} variant="ghost" className="text-rose-500 hover:bg-rose-50 hover:text-rose-600">
               Remove media
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </SubtlePanel>
 
       {error && <p className="text-sm text-rose-500">{error}</p>}
       <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-2">
         <p className="text-xs text-slate-400">
           Your post will appear in the campus feed as soon as it is published.
         </p>
-        <button type="submit" className="btn btn-primary" disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? 'Saving...' : submitLabel}
-        </button>
+        </Button>
       </div>
-    </form>
+    </Card>
   );
 }

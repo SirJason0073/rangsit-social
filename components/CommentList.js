@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { formatDate } from '@/utils/format';
 import CommentForm from './CommentForm';
 import { useAuth } from './Providers';
+import { Card } from './ui/Card';
+import { Skeleton, SkeletonText } from './ui/Skeleton';
 
 function displayName(comment) {
   const full = [comment.first_name, comment.last_name].filter(Boolean).join(' ');
@@ -39,7 +41,7 @@ export default function CommentList({ postId }) {
   }
 
   return (
-    <section className="card p-6">
+    <Card as="section" className="p-6">
       <div className="flex items-center justify-between">
         <h3 className="section-title">Comments</h3>
         <span className="badge">{comments.length}</span>
@@ -48,11 +50,22 @@ export default function CommentList({ postId }) {
       {user ? (
         <CommentForm onSubmit={handleAdd} />
       ) : (
-        <p className="text-sm text-slate-500 mt-3">Log in to join the conversation.</p>
+        <p className="mt-3 text-sm text-slate-500">Log in to join the conversation.</p>
       )}
 
       {loading ? (
-        <p className="text-sm text-slate-500 mt-4">Loading comments...</p>
+        <div className="mt-4 space-y-3">
+          <div className="rounded-3xl border border-slate-100 bg-white/70 p-4">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <div className="flex-1">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="mt-2 h-3 w-32" />
+              </div>
+            </div>
+            <SkeletonText lines={2} className="mt-3" />
+          </div>
+        </div>
       ) : comments.length ? (
         <div className="mt-5 space-y-4">
           {comments.map((comment) => (
@@ -67,7 +80,7 @@ export default function CommentList({ postId }) {
                     className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="h-8 w-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-semibold">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
                     {displayName(comment).slice(0, 1).toUpperCase()}
                   </div>
                 )}
@@ -81,8 +94,8 @@ export default function CommentList({ postId }) {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-slate-500 mt-4">No comments yet. Be the first!</p>
+        <p className="mt-4 text-sm text-slate-500">No comments yet. Be the first!</p>
       )}
-    </section>
+    </Card>
   );
 }

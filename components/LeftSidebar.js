@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from './Providers';
+import { Card, SubtlePanel } from './ui/Card';
 
 function displayName(user) {
   const full = [user?.first_name, user?.last_name].filter(Boolean).join(' ');
@@ -16,7 +17,7 @@ export default function LeftSidebar() {
 
   return (
     <div className="space-y-5">
-      <section className="sidebar-card">
+      <Card as="section" className="p-5">
         <Link href={user.profile_completed ? `/profile/${user.id}` : '/onboarding'} className="flex items-center gap-4">
           {user.avatar ? (
             <Image
@@ -38,9 +39,22 @@ export default function LeftSidebar() {
             </p>
           </div>
         </Link>
-      </section>
 
-      <section className="sidebar-card">
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <SubtlePanel className="p-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Profile</p>
+            <p className="mt-2 text-sm font-semibold text-slate-900">
+              {user.profile_completed ? 'Complete' : 'Setup needed'}
+            </p>
+          </SubtlePanel>
+          <SubtlePanel className="p-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Status</p>
+            <p className="mt-2 text-sm font-semibold text-slate-900">Campus active</p>
+          </SubtlePanel>
+        </div>
+      </Card>
+
+      <Card as="section" className="p-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Shortcuts</h2>
         <div className="mt-4 flex flex-col gap-2">
           <Link href="/feed" className="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-brand-50 hover:text-brand-700">
@@ -61,9 +75,9 @@ export default function LeftSidebar() {
             </Link>
           ) : null}
         </div>
-      </section>
+      </Card>
 
-      <section className="sidebar-card">
+      <Card as="section" className="p-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Campus spaces</h2>
         <div className="mt-4 space-y-2">
           {['Student clubs', 'Creative showcase', 'Study groups', 'Events board'].map((item) => (
@@ -72,9 +86,9 @@ export default function LeftSidebar() {
             </div>
           ))}
         </div>
-      </section>
+      </Card>
 
-      <section className="sidebar-card">
+      <Card as="section" className="p-5">
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Saved & planning</h2>
         <div className="mt-4 grid gap-3">
           <div className="rounded-2xl bg-brand-50 px-4 py-3">
@@ -86,7 +100,7 @@ export default function LeftSidebar() {
             <p className="mt-1 text-xs leading-5 text-slate-500">Quick access to student activities and club news.</p>
           </div>
         </div>
-      </section>
+      </Card>
     </div>
   );
 }

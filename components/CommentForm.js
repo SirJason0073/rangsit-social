@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Button from './ui/Button';
+import { TextInput } from './ui/Field';
 
 export default function CommentForm({ onSubmit }) {
   const [content, setContent] = useState('');
@@ -27,15 +29,15 @@ export default function CommentForm({ onSubmit }) {
   return (
     <form onSubmit={handleSubmit} className="mt-4 space-y-2">
       <div className="flex gap-3">
-        <input
-          className="input flex-1"
+        <TextInput
+          className="flex-1"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write a comment..."
         />
-        <button className="btn btn-primary" disabled={loading}>
+        <Button disabled={loading}>
           {loading ? 'Posting...' : 'Post'}
-        </button>
+        </Button>
       </div>
       {error ? <p className="text-sm text-rose-500">{error}</p> : null}
     </form>

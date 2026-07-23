@@ -6,28 +6,28 @@ import RouteGuard from '@/components/RouteGuard';
 export default function FeedPage() {
   return (
     <RouteGuard requireProfile>
-      <div className="grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)] xl:h-[calc(100vh-9rem)] xl:grid-cols-[280px_minmax(0,1fr)_340px] xl:overflow-hidden xl:gap-5">
-        <aside className="hidden lg:block xl:h-full xl:overflow-y-auto xl:pr-0">
-          <div className="xl:sticky xl:top-0">
+      <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_340px] xl:gap-6">
+        <aside className="hidden lg:block">
+          <div className="lg:sticky lg:top-24">
             <LeftSidebar />
           </div>
         </aside>
 
-        <div className="space-y-6 xl:h-full xl:overflow-y-auto xl:px-1">
-          <div className="glass-panel overflow-hidden p-6">
-            <div className="rounded-[28px] bg-gradient-to-r from-brand-900 via-brand-800 to-sky-500 p-8 text-white">
+        <main className="min-w-0 space-y-5">
+          <div className="glass-panel overflow-hidden p-4 md:p-5">
+            <div className="rounded-[30px] bg-gradient-to-r from-brand-900 via-brand-800 to-sky-500 px-6 py-7 text-white md:px-8 md:py-8">
               <p className="text-xs font-semibold uppercase tracking-[0.26em] text-sky-100">Campus feed</p>
-              <h1 className="mt-3 text-4xl font-semibold tracking-tight">What students are sharing today</h1>
+              <h1 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight md:text-4xl">What students are sharing today</h1>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-sky-50/90">
                 Follow classmates, discover campus updates, and share moments in a feed that feels like a modern university social product.
               </p>
             </div>
           </div>
           <FeedList />
-        </div>
+        </main>
 
-        <aside className="hidden xl:block xl:h-full xl:overflow-y-auto xl:pl-0">
-          <div className="xl:sticky xl:top-0">
+        <aside className="hidden xl:block">
+          <div className="xl:sticky xl:top-24">
             <RightSidebar />
           </div>
         </aside>

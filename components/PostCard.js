@@ -7,6 +7,7 @@ import { useAuth } from './Providers';
 import { formatDate } from '@/utils/format';
 import LikeButton from './LikeButton';
 import SaveButton from './SaveButton';
+import { Card } from './ui/Card';
 
 function displayName(post) {
   const full = [post.first_name, post.last_name].filter(Boolean).join(' ');
@@ -28,7 +29,7 @@ export default function PostCard({ post, onDeleted, showActions = true }) {
   }
 
   return (
-    <article className="overflow-hidden rounded-[30px] border border-white/70 bg-[rgba(249,251,254,0.95)] p-6 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
+    <Card as="article" className="overflow-hidden p-5 md:p-6">
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           {post.author_avatar ? (
@@ -48,15 +49,28 @@ export default function PostCard({ post, onDeleted, showActions = true }) {
             <Link href={`/profile/${post.user_id}`} className="truncate font-semibold text-slate-950 hover:text-brand-700">
               {displayName(post)}
             </Link>
-            <p className="truncate text-xs uppercase tracking-[0.2em] text-slate-400">{formatDate(post.created_at)}</p>
+            <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-400">
+              <span>{formatDate(post.created_at)}</span>
+              {post.media_type ? <span className="hidden md:inline">•</span> : null}
+              {post.media_type ? <span>{post.media_type === 'video' ? 'Video post' : 'Image post'}</span> : null}
+            </div>
           </div>
         </div>
-        {post.media_type ? (
-          <span className="badge shrink-0">{post.media_type === 'video' ? 'Video post' : 'Image post'}</span>
-        ) : null}
+        <Link href={`/posts/${post.id}`} className="hidden text-sm font-medium text-slate-500 transition hover:text-brand-700 md:inline">
+          View post
+        </Link>
       </div>
 
-      <p className="mt-5 whitespace-pre-line text-[15px] leading-7 text-slate-700">{post.content}</p>
+      <div className="mt-5 flex items-center gap-2 text-xs font-medium">
+        <span className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-brand-700">
+          {post.like_count || 0} likes
+        </span>
+        <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-slate-500">
+          {post.comment_count || 0} comments
+        </span>
+      </div>
+
+      <p className="mt-4 whitespace-pre-line text-[15px] leading-7 text-slate-700">{post.content}</p>
 
       {post.media_url && post.media_type === 'image' && (
         <div className="mt-5 overflow-hidden rounded-[28px] border border-slate-200/80 bg-slate-100">
@@ -81,7 +95,7 @@ export default function PostCard({ post, onDeleted, showActions = true }) {
       )}
 
       <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-        <div className="flex items-center gap-3 text-sm text-slate-500">
+        <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
           <LikeButton postId={post.id} initialLiked={!!post.liked} initialCount={post.like_count} />
           <Link
             href={`/posts/${post.id}`}
@@ -100,6 +114,6 @@ export default function PostCard({ post, onDeleted, showActions = true }) {
           </div>
         )}
       </div>
-    </article>
+    </Card>
   );
 }
