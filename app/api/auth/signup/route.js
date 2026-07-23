@@ -29,6 +29,16 @@ export async function POST(req) {
 
     return NextResponse.json({ message: 'Account created. Please log in.' }, { status: 201 });
   } catch (err) {
+    console.error('[api/auth/signup] POST failed', err);
+
+    if (err?.code === 'ER_DUP_ENTRY') {
+      return NextResponse.json({ message: 'Email already in use.' }, { status: 409 });
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      return NextResponse.json({ message: err?.sqlMessage || err?.message || 'Signup failed.' }, { status: 500 });
+    }
+
     return NextResponse.json({ message: 'Signup failed.' }, { status: 500 });
   }
 }

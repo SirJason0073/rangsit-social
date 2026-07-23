@@ -16,8 +16,8 @@ export function verifyToken(token) {
   }
 }
 
-export function setAuthCookie(token) {
-  const cookieStore = cookies();
+export async function setAuthCookie(token) {
+  const cookieStore = await cookies();
   cookieStore.set(TOKEN_NAME, token, {
     httpOnly: true,
     sameSite: 'lax',
@@ -27,18 +27,18 @@ export function setAuthCookie(token) {
   });
 }
 
-export function clearAuthCookie() {
-  const cookieStore = cookies();
+export async function clearAuthCookie() {
+  const cookieStore = await cookies();
   cookieStore.set(TOKEN_NAME, '', { path: '/', maxAge: 0 });
 }
 
-export function getTokenFromCookies() {
-  const cookieStore = cookies();
+export async function getTokenFromCookies() {
+  const cookieStore = await cookies();
   return cookieStore.get(TOKEN_NAME)?.value || null;
 }
 
 export async function getUserFromRequest() {
-  const token = getTokenFromCookies();
+  const token = await getTokenFromCookies();
   if (!token) return null;
   const decoded = verifyToken(token);
   if (!decoded?.id) return null;

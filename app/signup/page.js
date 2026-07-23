@@ -35,9 +35,9 @@ export default function SignupPage() {
   return (
     <div className="grid min-h-[calc(100vh-9rem)] gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(440px,0.9fr)] lg:items-stretch xl:gap-8">
       <section className="glass-panel overflow-hidden p-0">
-        <div className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-brand-900 to-sky-500 p-8 text-white md:p-12">
+        <div className="relative flex h-full flex-col overflow-hidden bg-gradient-to-br from-slate-950 via-brand-900 to-sky-500 p-8 text-white md:p-12">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.16),transparent_22%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.08),transparent_24%)]" />
-          <div className="relative">
+          <div className="relative flex h-full flex-col">
             <BrandLogo dark />
             <div className="mt-10">
               <SectionHeader
