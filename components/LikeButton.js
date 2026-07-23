@@ -28,13 +28,15 @@ export default function LikeButton({ postId, initialLiked, initialCount }) {
     <button
       onClick={toggleLike}
       type="button"
+      aria-pressed={liked}
+      aria-label={`${liked ? 'Unlike' : 'Like'} post. ${count || 0} likes`}
       className={`inline-flex items-center gap-2 rounded-full px-3 py-2 transition ${
-        liked ? 'bg-rose-50 text-rose-600' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+        liked ? 'bg-danger-subtle text-danger' : 'text-foreground-secondary hover:bg-surface-muted hover:text-foreground'
       }`}
     >
       <span>{liked ? '♥' : '♡'}</span>
       <span>{liked ? 'Liked' : 'Like'}</span>
-      <span className="text-xs text-slate-400">{count}</span>
+      <span className="text-xs text-foreground-muted">{count}</span>
     </button>
   );
 }

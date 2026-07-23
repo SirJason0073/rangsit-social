@@ -33,7 +33,7 @@ export default function FollowButton({ targetId, initialFollowing, onChange }) {
   if (user?.id === Number(targetId)) return null;
 
   return (
-    <Button type="button" onClick={toggleFollow} disabled={loading} variant={following ? 'outline' : 'primary'}>
+    <Button type="button" onClick={toggleFollow} disabled={loading} aria-pressed={following} variant={following ? 'outline' : 'primary'}>
       {following ? 'Following' : 'Follow'}
     </Button>
   );

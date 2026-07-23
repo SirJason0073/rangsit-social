@@ -30,8 +30,9 @@ export default function SaveButton({ postId, initialSaved }) {
       type="button"
       onClick={toggleSaved}
       disabled={loading}
+      aria-pressed={saved}
       className={`inline-flex items-center gap-2 rounded-full px-3 py-2 transition ${
-        saved ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+        saved ? 'bg-brand-50 text-brand-700' : 'text-foreground-secondary hover:bg-surface-muted hover:text-foreground'
       }`}
     >
       <span>{saved ? 'Saved' : 'Save'}</span>

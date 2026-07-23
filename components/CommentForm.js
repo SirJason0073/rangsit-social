@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import Button from './ui/Button';
 import { TextInput } from './ui/Field';
 
 export default function CommentForm({ onSubmit }) {
+  const inputId = useId();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,6 +31,9 @@ export default function CommentForm({ onSubmit }) {
     <form onSubmit={handleSubmit} className="mt-4 space-y-2">
       <div className="flex gap-3">
         <TextInput
+          id={inputId}
+          name="comment"
+          aria-label="Write a comment"
           className="flex-1"
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -39,7 +43,7 @@ export default function CommentForm({ onSubmit }) {
           {loading ? 'Posting...' : 'Post'}
         </Button>
       </div>
-      {error ? <p className="text-sm text-rose-500">{error}</p> : null}
+      {error ? <p role="alert" aria-live="polite" className="text-sm text-danger">{error}</p> : null}
     </form>
   );
 }

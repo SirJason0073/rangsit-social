@@ -1,12 +1,16 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Button from './ui/Button';
 import { Card, SubtlePanel } from './ui/Card';
 import { FieldHint, FieldLabel, TextInput } from './ui/Field';
 
 export default function AuthForm({ type, onSubmit, footer }) {
+  const emailId = useId();
+  const passwordId = useId();
+  const errorId = useId();
+  const rememberId = useId();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,10 +24,10 @@ export default function AuthForm({ type, onSubmit, footer }) {
   const passwordStrength = useMemo(() => {
     if (type !== 'signup') return null;
     const value = form.password;
-    if (!value) return { label: 'Add a password', tone: 'bg-slate-200', width: 'w-1/4' };
-    if (value.length < 6) return { label: 'Weak', tone: 'bg-rose-400', width: 'w-1/4' };
-    if (value.length < 10) return { label: 'Medium', tone: 'bg-amber-400', width: 'w-2/4' };
-    return { label: 'Strong', tone: 'bg-emerald-500', width: 'w-full' };
+    if (!value) return { label: 'Add a password', tone: 'bg-surface-muted', width: 'w-1/4' };
+    if (value.length < 6) return { label: 'Weak', tone: 'bg-danger', width: 'w-1/4' };
+    if (value.length < 10) return { label: 'Medium', tone: 'bg-warning', width: 'w-2/4' };
+    return { label: 'Strong', tone: 'bg-success', width: 'w-full' };
   }, [form.password, type]);
 
   function validateForm() {
@@ -56,10 +60,10 @@ export default function AuthForm({ type, onSubmit, footer }) {
   return (
     <Card as="form" onSubmit={handleSubmit} className="mx-auto w-full max-w-lg space-y-6 p-6 md:p-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-950 dark:text-slate-100">
+        <h1 className="type-h1 text-foreground">
           {type === 'signup' ? 'Create your account' : 'Welcome back'}
         </h1>
-        <p className="text-sm leading-6 text-slate-500">
+        <p className="text-sm leading-6 text-foreground-muted">
           {type === 'signup'
             ? 'Start with your account, then finish onboarding to join the campus network.'
             : 'Log in to continue posting, following, and connecting across Rangsit Social.'}
@@ -68,10 +72,13 @@ export default function AuthForm({ type, onSubmit, footer }) {
 
       <div className="space-y-5">
         <div className="space-y-2">
-          <FieldLabel>Email</FieldLabel>
+          <FieldLabel htmlFor={emailId}>Email</FieldLabel>
           <TextInput
+            id={emailId}
+            name="email"
             className="h-12"
             type="email"
+            autoComplete="email"
             value={form.email}
             onChange={(e) => updateField('email', e.target.value)}
             placeholder="student@rangsit.edu"
@@ -81,17 +88,17 @@ export default function AuthForm({ type, onSubmit, footer }) {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-3">
-            <FieldLabel>Password</FieldLabel>
-            {type === 'login' ? (
-              <Link href="/login" className="text-xs font-medium text-brand-700 hover:text-brand-800">
-                Forgot password?
-              </Link>
-            ) : null}
+            <FieldLabel htmlFor={passwordId}>Password</FieldLabel>
           </div>
           <div className="relative">
             <TextInput
               className="h-12 pr-12"
+              id={passwordId}
+              name="password"
               type={showPassword ? 'text' : 'password'}
+              autoComplete={type === 'signup' ? 'new-password' : 'current-password'}
+              aria-invalid={!!error}
+              aria-describedby={error ? errorId : undefined}
               value={form.password}
               onChange={(e) => updateField('password', e.target.value)}
               placeholder={type === 'signup' ? 'Create a secure password' : 'Enter your password'}
@@ -99,7 +106,7 @@ export default function AuthForm({ type, onSubmit, footer }) {
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-2 py-1 text-xs font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-2 py-1 text-xs font-medium text-foreground-muted transition hover:bg-surface-muted hover:text-foreground"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
@@ -108,7 +115,7 @@ export default function AuthForm({ type, onSubmit, footer }) {
           </div>
           {passwordStrength ? (
             <div className="space-y-2">
-              <div className="h-2 rounded-full bg-slate-100">
+              <div className="h-2 rounded-full bg-surface-muted">
                 <div className={`h-2 rounded-full transition-all ${passwordStrength.tone} ${passwordStrength.width}`} />
               </div>
               <FieldHint>Password strength: {passwordStrength.label}</FieldHint>
@@ -117,21 +124,23 @@ export default function AuthForm({ type, onSubmit, footer }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-4 text-sm">
-        <label className="inline-flex items-center gap-2 text-slate-600">
+      {type === 'login' ? <div className="flex items-center justify-between gap-4 text-sm">
+        <label htmlFor={rememberId} className="inline-flex items-center gap-2 text-foreground-secondary">
           <input
+            id={rememberId}
+            name="rememberMe"
             type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="h-4 w-4 rounded border-slate-300 text-brand-700 focus:ring-brand-300"
+            className="h-4 w-4 rounded border-border text-brand-700 focus:ring-brand-300"
           />
           Remember me
         </label>
-        <FieldHint>{type === 'signup' ? 'Email verification can be added later.' : 'Secure session on this device.'}</FieldHint>
-      </div>
+        <FieldHint>Keep this session available on this device.</FieldHint>
+      </div> : null}
 
       {error ? (
-        <SubtlePanel className="border-rose-100 bg-rose-50/85 p-4 text-sm text-rose-600">
+        <SubtlePanel id={errorId} role="alert" aria-live="polite" className="border-danger/30 bg-danger-subtle p-4 text-sm text-danger">
           {error}
         </SubtlePanel>
       ) : null}
@@ -140,7 +149,7 @@ export default function AuthForm({ type, onSubmit, footer }) {
         {loading ? 'Please wait...' : type === 'signup' ? 'Sign up' : 'Log in'}
       </Button>
 
-      {footer ? <div className="border-t border-slate-100 pt-4">{footer}</div> : null}
+      {footer ? <div className="border-t border-border pt-4">{footer}</div> : null}
     </Card>
   );
 }

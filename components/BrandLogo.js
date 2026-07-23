@@ -1,12 +1,10 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function BrandLogo({ compact = false, dark = false }) {
   return (
     <Link href="/feed" className="group inline-flex items-center gap-3">
-      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-slate-950 shadow-lg shadow-slate-950/30 ring-1 ring-white/10">
+      <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-card bg-surface-inverse shadow-2 ring-1 ring-border">
         <Image
           src="/rangsit-logo.png"
           alt="Rangsit University"
@@ -18,10 +16,10 @@ export default function BrandLogo({ compact = false, dark = false }) {
       </div>
       {!compact && (
         <div className="min-w-0">
-          <p className={`truncate text-base font-semibold tracking-tight ${dark ? 'text-white' : 'text-slate-950'}`}>
+          <p className={`truncate text-base font-semibold tracking-tight ${dark ? 'text-foreground-inverse' : 'text-foreground'}`}>
             Rangsit Social
           </p>
-          <p className={`truncate text-xs font-medium uppercase tracking-[0.24em] ${dark ? 'text-white/70' : 'text-slate-500'}`}>
+          <p className={`truncate text-xs font-medium uppercase tracking-[0.2em] ${dark ? 'text-foreground-inverse/75' : 'text-foreground-muted'}`}>
             University Network
           </p>
         </div>

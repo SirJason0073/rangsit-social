@@ -20,17 +20,17 @@ export default function UserListItem({ user }) {
             alt={displayName(user)}
             width={56}
             height={56}
-            className="h-14 w-14 rounded-2xl object-cover ring-1 ring-slate-200"
+            className="h-14 w-14 rounded-card object-cover ring-1 ring-border"
           />
         ) : (
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-cyan-100 text-lg font-semibold text-indigo-700">
+          <div className="flex h-14 w-14 items-center justify-center rounded-card bg-gradient-to-br from-accent-subtle to-brand-subtle text-lg font-semibold text-accent">
             {displayName(user).slice(0, 1).toUpperCase()}
           </div>
         )}
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-slate-950">{displayName(user)}</p>
-          <p className="truncate text-sm text-slate-500">@{user.username || 'student'}</p>
-          {user.bio ? <p className="mt-1 truncate text-xs text-slate-400">{user.bio}</p> : null}
+          <p className="truncate text-sm font-semibold text-foreground">{displayName(user)}</p>
+          <p className="truncate text-sm text-foreground-muted">@{user.username || 'student'}</p>
+          {user.bio ? <p className="mt-1 truncate text-xs text-foreground-muted">{user.bio}</p> : null}
         </div>
       </Link>
       <FollowButton targetId={user.id} initialFollowing={!!user.isFollowing} />

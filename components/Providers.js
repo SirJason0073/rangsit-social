@@ -1,6 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import ThemeProvider from './ThemeProvider';
+import { ToastProvider } from './ui/Toast';
 
 const AuthContext = createContext(null);
 
@@ -8,7 +10,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export default function Providers({ children }) {
+function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,4 +40,14 @@ export default function Providers({ children }) {
   const value = useMemo(() => ({ user, setUser, loading, refresh: loadMe }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export default function Providers({ children }) {
+  return (
+    <ThemeProvider>
+      <ToastProvider>
+        <AuthProvider>{children}</AuthProvider>
+      </ToastProvider>
+    </ThemeProvider>
+  );
 }

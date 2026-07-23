@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { uploadPostMedia } from '@/utils/upload-client';
 import Button from './ui/Button';
 import { Card, SubtlePanel } from './ui/Card';
 import { FieldHint, FieldLabel, TextArea } from './ui/Field';
 
 export default function PostForm({ initial = { content: '', media_url: null, media_type: null }, onSubmit, submitLabel }) {
+  const contentId = useId();
+  const mediaId = useId();
   const [content, setContent] = useState(initial.content || '');
   const [mediaFile, setMediaFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(initial.media_url || '');
@@ -84,10 +86,12 @@ export default function PostForm({ initial = { content: '', media_url: null, med
     <Card as="form" onSubmit={handleSubmit} className="space-y-6 p-6 md:p-7">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-4">
-          <FieldLabel>Post content</FieldLabel>
-          <span className="text-xs text-slate-400">{content.length}/5000</span>
+          <FieldLabel htmlFor={contentId}>Post content</FieldLabel>
+          <span className="text-xs text-foreground-muted">{content.length}/5000</span>
         </div>
         <TextArea
+          id={contentId}
+          name="content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="What is happening around campus today?"
@@ -96,17 +100,19 @@ export default function PostForm({ initial = { content: '', media_url: null, med
         <FieldHint>Keep it clear and readable. One strong update works better than a long block.</FieldHint>
       </div>
 
-      <SubtlePanel className="rounded-[28px] border-dashed border-slate-300/80 p-5">
+      <SubtlePanel className="rounded-panel border-dashed border-border p-5">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <FieldLabel>Media upload</FieldLabel>
-            <p className="mt-1 text-sm text-slate-500">
+            <FieldLabel htmlFor={mediaId}>Media upload</FieldLabel>
+            <p className="mt-1 text-sm text-foreground-muted">
               Add one image or video. This keeps the composer simple and reliable for the demo.
             </p>
           </div>
           <span className="badge">Image or video</span>
         </div>
         <input
+          id={mediaId}
+          name="media"
           className="input mt-4"
           type="file"
           accept="image/*,video/*"
@@ -117,26 +123,26 @@ export default function PostForm({ initial = { content: '', media_url: null, med
             {previewType === 'video' ? (
               <video
                 src={previewUrl}
-                className="w-full max-h-96 rounded-[24px] border border-slate-200 bg-slate-950"
+                className="w-full max-h-96 rounded-panel border border-border bg-surface-inverse"
                 controls
               />
             ) : (
               <img
                 src={previewUrl}
                 alt="Preview"
-                className="w-full max-h-96 rounded-[24px] border border-slate-200 object-cover"
+                className="w-full max-h-96 rounded-panel border border-border object-cover"
               />
             )}
-            <Button type="button" onClick={handleRemoveMedia} variant="ghost" className="text-rose-500 hover:bg-rose-50 hover:text-rose-600">
+            <Button type="button" onClick={handleRemoveMedia} variant="ghost" className="text-danger hover:bg-danger-subtle hover:text-danger">
               Remove media
             </Button>
           </div>
         )}
       </SubtlePanel>
 
-      {error && <p className="text-sm text-rose-500">{error}</p>}
-      <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-2">
-        <p className="text-xs text-slate-400">
+      {error && <p role="alert" aria-live="polite" className="text-sm text-danger">{error}</p>}
+      <div className="flex items-center justify-between gap-4 border-t border-border pt-2">
+        <p className="text-xs text-foreground-muted">
           Your post will appear in the campus feed as soon as it is published.
         </p>
         <Button type="submit" disabled={loading}>

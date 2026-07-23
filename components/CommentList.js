@@ -50,12 +50,12 @@ export default function CommentList({ postId }) {
       {user ? (
         <CommentForm onSubmit={handleAdd} />
       ) : (
-        <p className="mt-3 text-sm text-slate-500">Log in to join the conversation.</p>
+        <p className="mt-3 text-sm text-foreground-muted">Log in to join the conversation.</p>
       )}
 
       {loading ? (
         <div className="mt-4 space-y-3">
-          <div className="rounded-3xl border border-slate-100 bg-white/70 p-4">
+          <div className="rounded-panel border border-border bg-surface-elevated/80 p-4">
             <div className="flex items-center gap-3">
               <Skeleton className="h-8 w-8 rounded-full" />
               <div className="flex-1">
@@ -69,7 +69,7 @@ export default function CommentList({ postId }) {
       ) : comments.length ? (
         <div className="mt-5 space-y-4">
           {comments.map((comment) => (
-            <div key={comment.id} className="rounded-3xl border border-slate-100 bg-white/70 p-4">
+            <div key={comment.id} className="rounded-panel border border-border bg-surface-elevated/80 p-4">
               <div className="flex items-center gap-3">
                 {comment.user_avatar ? (
                   <Image
@@ -85,16 +85,16 @@ export default function CommentList({ postId }) {
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-medium text-slate-950">{displayName(comment)}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{formatDate(comment.created_at)}</p>
+                  <p className="text-sm font-medium text-foreground">{displayName(comment)}</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground-muted">{formatDate(comment.created_at)}</p>
                 </div>
               </div>
-              <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">{comment.content}</p>
+              <p className="mt-3 whitespace-pre-line text-sm leading-6 text-foreground-secondary">{comment.content}</p>
             </div>
           ))}
         </div>
       ) : (
-        <p className="mt-4 text-sm text-slate-500">No comments yet. Be the first!</p>
+        <p className="mt-4 text-sm text-foreground-muted">No comments yet. Be the first!</p>
       )}
     </Card>
   );

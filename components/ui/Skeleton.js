@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
 
 export function Skeleton({ className = '' }) {
-  return <div className={cn('skeleton', className)} />;
+  return <div aria-hidden="true" className={cn('skeleton', className)} />;
 }
 
 export function SkeletonText({ lines = 3, className = '' }) {

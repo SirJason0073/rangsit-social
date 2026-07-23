@@ -54,14 +54,14 @@ export default function RightSidebar() {
     <div className="space-y-5">
       <Card as="section" className="p-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Who to follow</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Who to follow</h2>
           <Link href={user ? `/profile/${user.id}/following` : '/feed'} className="text-xs font-medium text-brand-700 hover:text-brand-800">
             View all
           </Link>
         </div>
         <div className="mt-4 space-y-4">
           {loading ? (
-            <p className="text-sm text-slate-500">Loading suggestions...</p>
+            <p className="text-sm text-foreground-muted">Loading suggestions...</p>
           ) : visibleSuggestions.length ? (
             visibleSuggestions.map((suggestion) => (
               <div key={suggestion.id} className="flex items-center justify-between gap-3">
@@ -72,64 +72,64 @@ export default function RightSidebar() {
                       alt={displayName(suggestion)}
                       width={44}
                       height={44}
-                      className="h-11 w-11 rounded-2xl object-cover"
+                      className="h-11 w-11 rounded-card object-cover"
                     />
                   ) : (
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-100 text-sm font-semibold text-brand-700">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-card bg-brand-100 text-sm font-semibold text-brand-700">
                       {displayName(suggestion).slice(0, 1).toUpperCase()}
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-950">{displayName(suggestion)}</p>
-                    <p className="truncate text-xs text-slate-500">@{suggestion.username || 'student'}</p>
+                    <p className="truncate text-sm font-semibold text-foreground">{displayName(suggestion)}</p>
+                    <p className="truncate text-xs text-foreground-muted">@{suggestion.username || 'student'}</p>
                   </div>
                 </Link>
                 <FollowButton targetId={suggestion.id} initialFollowing={!!suggestion.isFollowing} />
               </div>
             ))
           ) : (
-            <p className="text-sm text-slate-500">No suggestions right now.</p>
+            <p className="text-sm text-foreground-muted">No suggestions right now.</p>
           )}
         </div>
       </Card>
 
       <Card as="section" className="p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Campus trends</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Campus trends</h2>
         <div className="mt-4 space-y-3">
           {trends.map((trend) => (
-            <div key={trend} className="rounded-2xl bg-brand-50 px-4 py-3">
+            <div key={trend} className="rounded-card bg-brand-50 px-4 py-3">
               <p className="text-sm font-semibold text-brand-800">{trend}</p>
-              <p className="mt-1 text-xs text-slate-500">Trending around the Rangsit community</p>
+              <p className="mt-1 text-xs text-foreground-muted">Trending around the Rangsit community</p>
             </div>
           ))}
         </div>
       </Card>
 
       <Card as="section" className="p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Quick stats</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Quick stats</h2>
         <div className="mt-4 grid grid-cols-3 gap-3">
-          <div className="rounded-2xl bg-slate-50 px-3 py-4 text-center">
-            <p className="text-lg font-semibold text-slate-950">{stats.posts}</p>
-            <p className="mt-1 text-xs text-slate-500">Posts</p>
+          <div className="rounded-card bg-surface-muted px-3 py-4 text-center">
+            <p className="text-lg font-semibold text-foreground">{stats.posts}</p>
+            <p className="mt-1 text-xs text-foreground-muted">Posts</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 px-3 py-4 text-center">
-            <p className="text-lg font-semibold text-slate-950">{stats.followers}</p>
-            <p className="mt-1 text-xs text-slate-500">Followers</p>
+          <div className="rounded-card bg-surface-muted px-3 py-4 text-center">
+            <p className="text-lg font-semibold text-foreground">{stats.followers}</p>
+            <p className="mt-1 text-xs text-foreground-muted">Followers</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 px-3 py-4 text-center">
-            <p className="text-lg font-semibold text-slate-950">{stats.following}</p>
-            <p className="mt-1 text-xs text-slate-500">Following</p>
+          <div className="rounded-card bg-surface-muted px-3 py-4 text-center">
+            <p className="text-lg font-semibold text-foreground">{stats.following}</p>
+            <p className="mt-1 text-xs text-foreground-muted">Following</p>
           </div>
         </div>
       </Card>
 
       <Card as="section" className="p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Recent activity</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Recent activity</h2>
         <div className="mt-4 space-y-3">
           {activity.map((item) => (
-            <div key={item} className="rounded-2xl bg-slate-50 px-4 py-3">
-              <p className="text-sm font-medium text-slate-800">{item}</p>
-              <p className="mt-1 text-xs text-slate-500">Stay aware of movement around your network.</p>
+            <div key={item} className="rounded-card bg-surface-muted px-4 py-3">
+              <p className="text-sm font-medium text-foreground">{item}</p>
+              <p className="mt-1 text-xs text-foreground-muted">Stay aware of movement around your network.</p>
             </div>
           ))}
         </div>

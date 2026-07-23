@@ -46,17 +46,17 @@ export default function PostCard({ post, onDeleted, showActions = true }) {
             </div>
           )}
           <div className="min-w-0">
-            <Link href={`/profile/${post.user_id}`} className="truncate font-semibold text-slate-950 hover:text-brand-700">
+            <Link href={`/profile/${post.user_id}`} className="truncate font-semibold text-foreground hover:text-brand-700">
               {displayName(post)}
             </Link>
-            <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-400">
+            <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-foreground-muted">
               <span>{formatDate(post.created_at)}</span>
               {post.media_type ? <span className="hidden md:inline">•</span> : null}
               {post.media_type ? <span>{post.media_type === 'video' ? 'Video post' : 'Image post'}</span> : null}
             </div>
           </div>
         </div>
-        <Link href={`/posts/${post.id}`} className="hidden text-sm font-medium text-slate-500 transition hover:text-brand-700 md:inline">
+        <Link href={`/posts/${post.id}`} className="hidden text-sm font-medium text-foreground-muted transition hover:text-brand-700 md:inline">
           View post
         </Link>
       </div>
@@ -65,15 +65,15 @@ export default function PostCard({ post, onDeleted, showActions = true }) {
         <span className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-brand-700">
           {post.like_count || 0} likes
         </span>
-        <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-slate-500">
+        <span className="inline-flex rounded-full bg-surface-muted px-3 py-1 text-foreground-muted">
           {post.comment_count || 0} comments
         </span>
       </div>
 
-      <p className="mt-4 whitespace-pre-line text-[15px] leading-7 text-slate-700">{post.content}</p>
+      <p className="mt-4 whitespace-pre-line text-[15px] leading-7 text-foreground-secondary">{post.content}</p>
 
       {post.media_url && post.media_type === 'image' && (
-        <div className="mt-5 overflow-hidden rounded-[28px] border border-slate-200/80 bg-slate-100">
+        <div className="mt-5 overflow-hidden rounded-panel border border-border bg-surface-muted">
           <Image
             src={post.media_url}
             alt="Post media"
@@ -85,7 +85,7 @@ export default function PostCard({ post, onDeleted, showActions = true }) {
       )}
 
       {post.media_url && post.media_type === 'video' && (
-        <div className="mt-5 overflow-hidden rounded-[28px] border border-slate-200/80 bg-slate-950">
+        <div className="mt-5 overflow-hidden rounded-panel border border-border bg-surface-inverse">
           <video
             src={post.media_url}
             className="max-h-[30rem] w-full"
@@ -94,23 +94,23 @@ export default function PostCard({ post, onDeleted, showActions = true }) {
         </div>
       )}
 
-      <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-        <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+      <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+        <div className="flex flex-wrap items-center gap-2 text-sm text-foreground-muted">
           <LikeButton postId={post.id} initialLiked={!!post.liked} initialCount={post.like_count} />
           <Link
             href={`/posts/${post.id}`}
-            className="inline-flex items-center gap-2 rounded-full px-3 py-2 transition hover:bg-slate-100 hover:text-brand-700"
+            className="inline-flex items-center gap-2 rounded-full px-3 py-2 transition hover:bg-surface-muted hover:text-brand-700"
           >
             <span>Comment</span>
-            <span className="text-xs text-slate-400">{post.comment_count}</span>
+            <span className="text-xs text-foreground-muted">{post.comment_count}</span>
           </Link>
           <SaveButton postId={post.id} initialSaved={!!post.saved} />
         </div>
 
         {showActions && user?.id === post.user_id && (
           <div className="flex items-center gap-3 text-sm">
-            <Link href={`/posts/${post.id}/edit`} className="font-medium text-slate-500 hover:text-brand-700">Edit</Link>
-            <button onClick={handleDelete} className="text-rose-500 hover:text-rose-600">Delete</button>
+            <Link href={`/posts/${post.id}/edit`} className="font-medium text-foreground-muted hover:text-brand-700">Edit</Link>
+            <button onClick={handleDelete} className="text-danger hover:text-danger">Delete</button>
           </div>
         )}
       </div>

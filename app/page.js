@@ -1,5 +1,5 @@
-import FeedPage from './feed/page';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-  return <FeedPage />;
+export default function HomePage() {
+  redirect('/feed');
 }

@@ -68,8 +68,8 @@ export default function FeedList({
         <Card className="p-5 md:p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Start a post</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Start a post</p>
+              <p className="mt-2 text-sm leading-6 text-foreground-secondary">
                 Share a campus update, photo, or short video with your network.
               </p>
             </div>
