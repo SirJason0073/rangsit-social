@@ -11,7 +11,7 @@ const variants = {
 };
 
 const sizes = {
-  sm: 'min-h-9 px-3 py-1.5 text-sm',
+  sm: 'min-h-11 px-3 py-2 text-sm',
   md: '',
   lg: 'min-h-12 px-5 py-3 text-base'
 };
@@ -30,7 +30,7 @@ const Button = forwardRef(function Button(
       disabled={disabled}
       aria-busy={loading || undefined}
     >
-      {loading ? <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" /> : null}
+      {loading ? <span aria-hidden="true" className="loading-spinner" /> : null}
       {loading ? <span>{loadingLabel}</span> : children}
     </button>
   );

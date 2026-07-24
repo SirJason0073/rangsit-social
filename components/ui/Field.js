@@ -65,7 +65,7 @@ export const Radio = forwardRef(function Radio({ className = '', label, descript
 
 export const UploadControl = forwardRef(function UploadControl({ className = '', label = 'Choose file', hint, accept, onChange, ...props }, ref) {
   return (
-    <label className={cn('group flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-card border border-dashed border-border-strong bg-surface px-5 py-6 text-center transition duration-fast hover:border-brand hover:bg-brand-subtle', props.disabled && 'cursor-not-allowed opacity-60', className)}>
+    <label className={cn('group flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-card border border-dashed border-border-strong bg-surface px-5 py-6 text-center transition duration-fast hover:border-brand hover:bg-brand-subtle focus-within:border-focus focus-within:ring-2 focus-within:ring-focus focus-within:ring-offset-2 focus-within:ring-offset-surface', props.disabled && 'cursor-not-allowed opacity-60', className)}>
       <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-subtle text-brand-strong" aria-hidden="true"><Icon name="upload" /></span>
       <span className="mt-3 text-sm font-semibold text-foreground">{label}</span>
       {hint ? <span className="mt-1 text-xs leading-5 text-foreground-muted">{hint}</span> : null}

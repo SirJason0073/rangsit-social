@@ -9,7 +9,7 @@ import { useAuth } from '@/components/Providers';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, loading, setUser, refresh } = useAuth();
+  const { user, loading, setUser } = useAuth();
 
   useEffect(() => {
     if (loading || !user) return;
@@ -30,7 +30,6 @@ export default function LoginPage() {
     }
 
     setUser(data.user);
-    await refresh();
     const nextPath = new URLSearchParams(window.location.search).get('next');
     const destination = data.user.profile_completed ? (nextPath || '/feed') : '/onboarding';
     window.location.replace(destination);

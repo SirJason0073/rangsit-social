@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const protectedPrefixes = ['/feed', '/onboarding', '/posts', '/profile', '/saved'];
+const protectedPrefixes = ['/feed', '/onboarding', '/posts', '/profile', '/saved', '/search', '/notifications', '/settings'];
 const guestOnlyPrefixes = ['/login', '/signup'];
 
 export function middleware(request) {
@@ -26,5 +26,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/feed/:path*', '/login', '/signup', '/onboarding', '/posts/:path*', '/profile/:path*', '/saved']
+  matcher: ['/feed/:path*', '/login', '/signup', '/onboarding', '/posts/:path*', '/profile/:path*', '/saved', '/search/:path*', '/notifications', '/settings']
 };

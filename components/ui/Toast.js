@@ -39,10 +39,10 @@ export function ToastProvider({ children }) {
       {children}
       <div className="fixed inset-x-4 bottom-[calc(var(--mobile-nav-height)+1rem)] z-[90] flex flex-col items-end gap-3 lg:bottom-5" aria-live="polite" aria-atomic="true">
         {toasts.map((toast) => (
-          <div key={toast.id} role={toast.tone === 'danger' ? 'alert' : 'status'} className={`flex w-full max-w-sm items-start gap-3 rounded-card border p-4 shadow-3 ${toast.tone === 'danger' ? 'border-danger/30 bg-danger-subtle text-danger' : toast.tone === 'success' ? 'border-success/30 bg-success-subtle text-success' : toast.tone === 'warning' ? 'border-warning/30 bg-warning-subtle text-warning' : 'border-border bg-surface-elevated text-foreground'}`}>
+          <div key={toast.id} role={toast.tone === 'danger' ? 'alert' : 'status'} className={`notification-enter flex w-full max-w-sm items-start gap-3 rounded-card border p-4 shadow-3 ${toast.tone === 'danger' ? 'border-danger/30 bg-danger-subtle text-danger' : toast.tone === 'success' ? 'border-success/30 bg-success-subtle text-success' : toast.tone === 'warning' ? 'border-warning/30 bg-warning-subtle text-warning' : 'border-border bg-surface-elevated text-foreground'}`}>
             <Icon name={toast.tone === 'success' ? 'check' : toast.tone === 'danger' || toast.tone === 'warning' ? 'alert' : 'info'} size="sm" className="mt-0.5 shrink-0" />
             <p className="min-w-0 flex-1 text-sm font-medium leading-6">{toast.message}</p>
-            <button type="button" onClick={() => dismiss(toast.id)} className="rounded-control p-1 text-current opacity-70 hover:opacity-100" aria-label="Dismiss notification"><Icon name="close" size="sm" /></button>
+            <button type="button" onClick={() => dismiss(toast.id)} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-control text-current opacity-70 hover:bg-surface-elevated/50 hover:opacity-100" aria-label="Dismiss notification"><Icon name="close" size="sm" /></button>
           </div>
         ))}
       </div>

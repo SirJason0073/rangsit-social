@@ -16,7 +16,8 @@ CREATE TABLE users (
   bio VARCHAR(255) DEFAULT '',
   avatar VARCHAR(255) DEFAULT '',
   profile_completed TINYINT(1) NOT NULL DEFAULT 0,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_users_suggestions (profile_completed, created_at)
 );
 
 CREATE TABLE posts (
@@ -27,6 +28,8 @@ CREATE TABLE posts (
   media_type VARCHAR(20) DEFAULT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_posts_feed (created_at, id),
+  KEY idx_posts_user_feed (user_id, created_at, id),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -36,6 +39,8 @@ CREATE TABLE comments (
   user_id INT NOT NULL,
   content TEXT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_comments_post_created (post_id, created_at, id),
+  KEY idx_comments_user_created (user_id, created_at),
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -46,6 +51,7 @@ CREATE TABLE likes (
   user_id INT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY unique_like (post_id, user_id),
+  KEY idx_likes_user_created (user_id, created_at),
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -56,6 +62,8 @@ CREATE TABLE saved_posts (
   post_id INT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY unique_saved_post (user_id, post_id),
+  KEY idx_saved_posts_user_created (user_id, created_at, post_id),
+  KEY idx_saved_posts_post (post_id),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
 );
@@ -66,6 +74,7 @@ CREATE TABLE follows (
   following_id INT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY unique_follow (follower_id, following_id),
+  KEY idx_follows_following_created (following_id, created_at, follower_id),
   FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE
 );

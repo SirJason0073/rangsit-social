@@ -1,75 +1,74 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ProfileHeader from '@/components/ProfileHeader';
-import FeedList from '@/components/FeedList';
+import ProfileTabs from '@/components/ProfileTabs';
 import Loading from '@/components/Loading';
 import RouteGuard from '@/components/RouteGuard';
-import { Card, SubtlePanel } from '@/components/ui/Card';
-import { formatDateOnly } from '@/utils/format';
+import ErrorState from '@/components/ui/ErrorState';
 
 export default function ProfilePage() {
   const params = useParams();
   const [profile, setProfile] = useState(null);
-  const [stats, setStats] = useState({ followers: 0, following: 0, isFollowing: false });
+  const [initialPosts, setInitialPosts] = useState([]);
+  const [initialPagination, setInitialPagination] = useState(null);
+  const [stats, setStats] = useState({ posts: 0, followers: 0, following: 0, isFollowing: false });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  async function loadProfile() {
-    const res = await fetch(`/api/users/${params.id}`);
-    const data = await res.json();
-    setProfile(data.user);
-    setStats(data.stats || { followers: 0, following: 0, isFollowing: false });
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    loadProfile();
+  const loadProfile = useCallback(async () => {
+    setError('');
+    try {
+      const response = await fetch(`/api/users/${params.id}?page=1&limit=6`, {
+        cache: 'no-store',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Profile could not be loaded.');
+      setProfile(data.user);
+      setInitialPosts(data.posts || []);
+      setInitialPagination(data.pagination || null);
+      setStats({
+        followers: Number(data.stats?.followers) || 0,
+        following: Number(data.stats?.following) || 0,
+        isFollowing: Boolean(data.stats?.isFollowing),
+        posts: Number(data.pagination?.total) || 0
+      });
+    } catch (requestError) {
+      setProfile(null);
+      setError(requestError.message || 'Profile could not be loaded.');
+    } finally {
+      setLoading(false);
+    }
   }, [params.id]);
 
-  if (loading) return <Loading label="Loading profile..." />;
-  if (!profile) return <p className="text-sm text-foreground-muted">User not found.</p>;
+  useEffect(() => {
+    setLoading(true);
+    loadProfile();
+  }, [loadProfile]);
+
+  function handleRelationshipChange(isFollowing) {
+    setStats((current) => {
+      if (current.isFollowing === isFollowing) return current;
+      return {
+        ...current,
+        isFollowing,
+        followers: Math.max(0, current.followers + (isFollowing ? 1 : -1))
+      };
+    });
+  }
 
   return (
     <RouteGuard requireProfile>
-      <div className="space-y-8">
-        <ProfileHeader user={profile} stats={stats} />
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="section-title">Posts</h2>
-              <p className="text-sm text-foreground-muted">Recent posts</p>
-            </div>
-            <FeedList
-              endpoint={`/api/users/${params.id}`}
-              emptyTitle="No posts yet"
-              emptyDescription="This user hasn't posted anything yet."
-            />
-          </section>
-
-          <aside className="space-y-4">
-            <Card className="p-5">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Profile details</h2>
-              <div className="mt-4 grid gap-3">
-                <SubtlePanel className="p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-foreground-muted">Username</p>
-                  <p className="mt-2 text-sm font-semibold text-foreground">@{profile.username || 'student'}</p>
-                </SubtlePanel>
-                <SubtlePanel className="p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-foreground-muted">Birthday</p>
-                  <p className="mt-2 text-sm font-semibold text-foreground">{formatDateOnly(profile.birthday)}</p>
-                </SubtlePanel>
-                <SubtlePanel className="p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-foreground-muted">Network</p>
-                  <p className="mt-2 text-sm font-semibold text-foreground">
-                    {stats.followers} followers · {stats.following} following
-                  </p>
-                </SubtlePanel>
-              </div>
-            </Card>
-          </aside>
+      {loading ? <Loading label="Loading profile..." /> : null}
+      {!loading && error ? <ErrorState title="Unable to load profile" description={error} onRetry={() => { setLoading(true); loadProfile(); }} /> : null}
+      {!loading && profile ? (
+        <div className="mx-auto max-w-5xl space-y-6">
+          <ProfileHeader user={profile} stats={stats} onRelationshipChange={handleRelationshipChange} />
+          <ProfileTabs user={profile} initialPosts={initialPosts} initialPagination={initialPagination} />
         </div>
-      </div>
+      ) : null}
     </RouteGuard>
   );
 }

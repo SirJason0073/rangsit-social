@@ -25,21 +25,21 @@ export default function AuthHero({ mode = 'login' }) {
   const item = content[mode] || content.login;
 
   return (
-    <section className="auth-hero" aria-labelledby="auth-hero-title">
+    <section className="auth-hero" aria-label="About Rangsit Social">
       <div className="relative z-10">
-        <BrandLogo dark />
-        <p className="mt-12 text-xs font-semibold uppercase tracking-[0.24em] text-foreground-inverse/70">
+        <BrandLogo dark linked={false} />
+        <p className="mt-8 text-xs font-semibold uppercase tracking-[0.24em] text-foreground-inverse/70 sm:mt-12">
           {item.eyebrow}
         </p>
-        <h2 id="auth-hero-title" className="mt-4 max-w-xl text-4xl font-bold leading-tight tracking-[-0.035em] text-foreground-inverse md:text-5xl">
+        <p className="mt-4 max-w-xl text-3xl font-bold leading-tight tracking-[-0.035em] text-foreground-inverse sm:text-4xl md:text-5xl">
           {item.title}
-        </h2>
+        </p>
         <p className="mt-5 max-w-xl text-base leading-7 text-foreground-inverse/80 md:text-lg">
           {item.description}
         </p>
       </div>
 
-      <ul className="relative z-10 mt-10 grid gap-3" aria-label="Rangsit Social benefits">
+      <ul className="relative z-10 mt-8 grid gap-3 sm:mt-10" aria-label="Rangsit Social benefits">
         {item.points.map((point, index) => (
           <li key={point} className="flex items-center gap-3 text-sm font-medium text-foreground-inverse/90">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-foreground-inverse/10 text-xs" aria-hidden="true">

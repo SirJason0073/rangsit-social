@@ -6,6 +6,7 @@ import { FieldError, TextInput } from './ui/Field';
 
 export default function CommentForm({ onSubmit }) {
   const inputId = useId();
+  const errorId = `${inputId}-error`;
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,19 +35,22 @@ export default function CommentForm({ onSubmit }) {
 
   return (
     <form onSubmit={handleSubmit} className="mt-4 space-y-2">
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <TextInput
           id={inputId}
           name="comment"
           aria-label="Write a comment"
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
           className="flex-1"
+          maxLength={300}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write a comment..."
         />
-        <Button type="submit" loading={loading} loadingLabel="Posting">Post</Button>
+        <Button type="submit" className="w-full sm:w-auto" loading={loading} loadingLabel="Posting">Post</Button>
       </div>
-      <FieldError aria-live="polite">{error}</FieldError>
+      <FieldError id={errorId} aria-live="polite">{error}</FieldError>
     </form>
   );
 }

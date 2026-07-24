@@ -16,9 +16,11 @@ export async function GET(req) {
     const userId = user?.id || 0;
     const { searchParams } = new URL(req.url);
     const { page, limit, offset } = getPagination(searchParams);
-    const totalRows = await query('SELECT COUNT(*) AS count FROM posts');
+    const [totalRows, savedPostsAvailable] = await Promise.all([
+      query('SELECT COUNT(*) AS count FROM posts'),
+      hasTable('saved_posts')
+    ]);
     const total = toCountNumber(totalRows[0]?.count);
-    const savedPostsAvailable = await hasTable('saved_posts');
     const savedSelect = savedPostsAvailable
       ? '(SELECT COUNT(*) FROM saved_posts WHERE post_id = posts.id AND user_id = ?) AS saved'
       : '0 AS saved';

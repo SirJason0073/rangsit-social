@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from './Providers';
 import Button from './ui/Button';
@@ -13,11 +13,20 @@ export default function FollowButton({ targetId, initialFollowing, onChange, siz
   const [following, setFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setFollowing(Boolean(initialFollowing));
+  }, [initialFollowing]);
+
   async function toggleFollow() {
     if (!user) {
       router.push('/login');
       return;
     }
+    if (loading) return;
+    const previousFollowing = following;
+    const optimisticFollowing = !following;
+    setFollowing(optimisticFollowing);
+    onChange?.(optimisticFollowing);
     setLoading(true);
     try {
       const res = await fetch('/api/follows', {
@@ -27,16 +36,20 @@ export default function FollowButton({ targetId, initialFollowing, onChange, siz
       });
       if (!res.ok) throw new Error('Follow failed');
       const data = await res.json();
-      setFollowing(data.following);
-      onChange?.(data.following);
+      if (Boolean(data.following) !== optimisticFollowing) {
+        setFollowing(Boolean(data.following));
+        onChange?.(Boolean(data.following));
+      }
     } catch {
+      setFollowing(previousFollowing);
+      onChange?.(previousFollowing);
       notify('Could not update this follow.', { tone: 'danger' });
     } finally {
       setLoading(false);
     }
   }
 
-  if (user?.id === Number(targetId)) return null;
+  if (Number(user?.id) === Number(targetId)) return null;
 
   return (
     <Button type="button" onClick={toggleFollow} loading={loading} loadingLabel="Updating" aria-pressed={following} variant={following ? 'outline' : 'primary'} size={size}>

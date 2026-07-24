@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import ThemeProvider from './ThemeProvider';
+import PreferencesProvider from './PreferencesProvider';
 import { ToastProvider } from './ui/Toast';
 
 const AuthContext = createContext(null);
@@ -45,9 +46,11 @@ function AuthProvider({ children }) {
 export default function Providers({ children }) {
   return (
     <ThemeProvider>
-      <ToastProvider>
-        <AuthProvider>{children}</AuthProvider>
-      </ToastProvider>
+      <PreferencesProvider>
+        <ToastProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ToastProvider>
+      </PreferencesProvider>
     </ThemeProvider>
   );
 }

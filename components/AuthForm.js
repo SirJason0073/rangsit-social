@@ -129,7 +129,7 @@ export default function AuthForm({ type, onSubmit, footer }) {
             />
             <button
               type="button"
-              className="absolute right-2 top-1/2 min-h-9 -translate-y-1/2 rounded-control px-2 text-xs font-semibold text-foreground-muted transition hover:bg-surface-muted hover:text-foreground"
+              className="absolute right-1 top-1/2 min-h-11 -translate-y-1/2 rounded-control px-3 text-xs font-semibold text-foreground-muted transition hover:bg-surface-muted hover:text-foreground"
               onClick={() => setShowPassword((current) => !current)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               aria-pressed={showPassword}

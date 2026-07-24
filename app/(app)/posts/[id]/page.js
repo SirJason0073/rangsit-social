@@ -12,13 +12,24 @@ import { Card, SubtlePanel } from '@/components/ui/Card';
 export default function PostDetailPage() {
   const params = useParams();
   const [post, setPost] = useState(null);
+  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   async function loadPost() {
-    const res = await fetch(`/api/posts/${params.id}`);
-    const data = await res.json();
-    setPost(data.post);
-    setLoading(false);
+    try {
+      const [postResponse, commentsResponse] = await Promise.all([
+        fetch(`/api/posts/${params.id}`, { cache: 'no-store' }),
+        fetch(`/api/posts/${params.id}/comments`, { cache: 'no-store' })
+      ]);
+      const [postData, commentsData] = await Promise.all([
+        postResponse.json(),
+        commentsResponse.json()
+      ]);
+      setPost(postResponse.ok ? postData.post : null);
+      setComments(commentsResponse.ok ? (commentsData.comments || []) : []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -42,7 +53,7 @@ export default function PostDetailPage() {
             </p>
           </Card>
           <PostCard post={post} showActions />
-          <CommentList postId={post.id} />
+          <CommentList postId={post.id} initialComments={comments} />
         </div>
 
         <aside className="space-y-4">

@@ -26,8 +26,8 @@ export default function RightSidebar() {
 
       try {
         const [suggestionsRes, profileRes] = await Promise.all([
-          fetch('/api/users/suggestions', { signal: controller.signal }),
-          fetch(`/api/users/${user.id}`, { signal: controller.signal })
+          fetch('/api/users/suggestions?limit=12', { signal: controller.signal, cache: 'no-store' }),
+          fetch(`/api/users/${user.id}?includePosts=false`, { signal: controller.signal })
         ]);
         if (!suggestionsRes.ok || !profileRes.ok) throw new Error('Sidebar data failed');
 
@@ -36,7 +36,7 @@ export default function RightSidebar() {
 
         setSuggestions(suggestionsData.users || []);
         setStats({
-          posts: profileData.posts?.length || 0,
+          posts: profileData.pagination?.total || 0,
           followers: profileData.stats?.followers || 0,
           following: profileData.stats?.following || 0
         });
@@ -58,8 +58,8 @@ export default function RightSidebar() {
       <Card as="section" className="p-5">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Who to follow</h2>
-          <Link href={user ? `/profile/${user.id}/following` : '/feed'} className="text-xs font-medium text-brand-strong hover:text-brand">
-            View all
+          <Link href="/search?type=people" className="link text-xs font-semibold">
+            Show all
           </Link>
         </div>
         <div className="mt-3 divide-y divide-border">
@@ -68,7 +68,18 @@ export default function RightSidebar() {
           ) : error ? (
             <p className="py-4 text-sm text-foreground-muted">Suggestions are temporarily unavailable.</p>
           ) : visibleSuggestions.length ? (
-            visibleSuggestions.map((suggestion) => <UserListItem key={suggestion.id} user={suggestion} compact />)
+            visibleSuggestions.map((suggestion) => (
+              <UserListItem
+                key={suggestion.id}
+                user={suggestion}
+                compact
+                onFollowChange={(following) => {
+                  if (following) {
+                    setSuggestions((current) => current.filter((item) => String(item.id) !== String(suggestion.id)));
+                  }
+                }}
+              />
+            ))
           ) : (
             <p className="text-sm text-foreground-muted">No suggestions right now.</p>
           )}
@@ -76,13 +87,13 @@ export default function RightSidebar() {
       </Card>
 
       <Card as="section" className="p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Campus trends</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground-muted">Campus topics</h2>
         <div className="mt-3 divide-y divide-border">
           {trends.map((trend) => (
-            <div key={trend} className="py-3">
+            <Link key={trend} href={`/search?q=${encodeURIComponent(trend.slice(1))}&type=campus`} className="block py-3 hover:text-brand-strong">
               <p className="text-sm font-semibold text-brand-strong">{trend}</p>
-              <p className="mt-0.5 text-xs text-foreground-muted">Campus conversation</p>
-            </div>
+              <p className="mt-0.5 text-xs text-foreground-muted">Search campus posts</p>
+            </Link>
           ))}
         </div>
       </Card>

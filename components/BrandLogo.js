@@ -1,9 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function BrandLogo({ compact = false, dark = false }) {
+export default function BrandLogo({ compact = false, compactOnMobile = false, dark = false, linked = true }) {
+  const Wrapper = linked ? Link : 'div';
   return (
-    <Link href="/feed" className="group inline-flex items-center gap-3 rounded-control" aria-label="Rangsit Social home">
+    <Wrapper {...(linked ? { href: '/feed', 'aria-label': 'Rangsit Social home' } : {})} className="group inline-flex items-center gap-3 rounded-control">
       <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-control bg-surface-inverse ring-1 ring-border">
         <Image
           src="/rangsit-logo.png"
@@ -15,7 +16,7 @@ export default function BrandLogo({ compact = false, dark = false }) {
         />
       </div>
       {!compact && (
-        <div className="min-w-0">
+        <div className={`min-w-0 ${compactOnMobile ? 'hidden sm:block' : ''}`}>
           <p className={`truncate text-base font-semibold tracking-tight ${dark ? 'text-foreground-inverse' : 'text-foreground'}`}>
             Rangsit Social
           </p>
@@ -24,6 +25,6 @@ export default function BrandLogo({ compact = false, dark = false }) {
           </p>
         </div>
       )}
-    </Link>
+    </Wrapper>
   );
 }

@@ -3,69 +3,77 @@
 import Link from 'next/link';
 import { useAuth } from './Providers';
 import FollowButton from './FollowButton';
-import { formatDateOnly } from '@/utils/format';
-import { Card, SubtlePanel } from './ui/Card';
 import Avatar from './ui/Avatar';
 import Badge from './ui/Badge';
 import Icon from './ui/Icon';
 
 function displayName(user) {
-  const full = [user.first_name, user.last_name].filter(Boolean).join(' ');
-  return full || user.username || user.email;
+  return [user.first_name, user.last_name].filter(Boolean).join(' ') || user.username || user.email;
 }
 
-export default function ProfileHeader({ user, stats }) {
+export default function ProfileHeader({ user, stats, onRelationshipChange }) {
   const { user: currentUser } = useAuth();
   const isOwnProfile = Number(currentUser?.id) === Number(user.id);
   const name = displayName(user);
 
   return (
-    <Card className="overflow-hidden">
-      <div className="h-2 bg-brand" aria-hidden="true" />
-      <div className="p-5 md:p-7">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-start gap-4 md:gap-5">
-            <Avatar src={user.avatar} alt={name} fallback={name} size="xl" className="ring-4 ring-brand-subtle" />
-            <div className="min-w-0">
-              <Badge><Icon name="user" size="sm" />Campus profile</Badge>
-              <h1 className="mt-3 truncate text-2xl font-semibold tracking-tight text-foreground md:text-3xl">{name}</h1>
-              <p className="mt-1 text-sm font-medium text-foreground-muted">@{user.username || 'student'}</p>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <Badge tone="neutral">Birthday {formatDateOnly(user.birthday)}</Badge>
-                <Badge tone="neutral">{stats.followers} followers</Badge>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            {isOwnProfile ? (
-              <Link href="/profile/edit" className="btn btn-outline"><Icon name="edit" size="sm" />Edit profile</Link>
-            ) : (
-              <FollowButton targetId={user.id} initialFollowing={stats.isFollowing} />
-            )}
-            <Link href={`/profile/${user.id}/followers`} className="btn btn-ghost"><Icon name="users" size="sm" />View network</Link>
-          </div>
+    <section className="overflow-hidden rounded-panel border border-border bg-surface-elevated shadow-1" aria-labelledby="profile-name">
+      <div className="relative h-36 overflow-hidden bg-gradient-to-br from-brand-strong via-brand to-accent sm:h-44 md:h-52">
+        <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full border border-foreground-inverse/15 shadow-[0_0_0_3rem_rgb(var(--color-text-inverse)/0.04),0_0_0_6rem_rgb(var(--color-text-inverse)/0.03)]" aria-hidden="true" />
+        <div className="absolute bottom-5 right-6 hidden text-right text-foreground-inverse/70 sm:block">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em]">Rangsit Social</p>
+          <p className="mt-1 text-sm">Campus profile</p>
         </div>
       </div>
 
-      <div className="grid gap-5 border-t border-border px-5 py-5 md:px-7 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-        <p className="text-sm leading-7 text-foreground-secondary">{user.bio || 'No bio yet.'}</p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-          <Link href={`/profile/${user.id}/followers`} className="block rounded-card">
-            <SubtlePanel className="p-4 transition duration-fast hover:border-brand hover:bg-brand-subtle">
-              <p className="text-xs uppercase tracking-[0.18em] text-foreground-muted">Followers</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground">{stats.followers}</p>
-              <p className="mt-1 text-sm text-foreground-muted">People following this profile</p>
-            </SubtlePanel>
-          </Link>
-          <Link href={`/profile/${user.id}/following`} className="block rounded-card">
-            <SubtlePanel className="p-4 transition duration-fast hover:border-brand hover:bg-brand-subtle">
-              <p className="text-xs uppercase tracking-[0.18em] text-foreground-muted">Following</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground">{stats.following}</p>
-              <p className="mt-1 text-sm text-foreground-muted">Profiles this user follows</p>
-            </SubtlePanel>
-          </Link>
+      <div className="relative px-4 pb-5 sm:px-6 md:px-8">
+        <div className="-mt-14 flex flex-col gap-4 sm:-mt-16 sm:flex-row sm:items-end sm:justify-between">
+          <Avatar
+            src={user.avatar}
+            alt={name}
+            fallback={name}
+            size="xl"
+            className="h-28 w-28 rounded-full bg-surface-elevated p-1 ring-0 sm:h-32 sm:w-32"
+          />
+          <div className="flex flex-wrap gap-2 sm:pb-2">
+            {isOwnProfile ? (
+              <Link href="/profile/edit" className="btn btn-outline"><Icon name="edit" size="sm" />Edit profile</Link>
+            ) : (
+              <FollowButton
+                targetId={user.id}
+                initialFollowing={stats.isFollowing}
+                onChange={onRelationshipChange}
+              />
+            )}
+          </div>
         </div>
+
+        <div className="mt-4 max-w-3xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 id="profile-name" className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{name}</h1>
+            {isOwnProfile ? <Badge tone="neutral">Your profile</Badge> : null}
+          </div>
+          <p className="mt-1 text-sm font-medium text-foreground-muted">@{user.username || 'student'}</p>
+          <p className="mt-4 max-w-2xl whitespace-pre-wrap text-sm leading-6 text-foreground-secondary">
+            {user.bio || (isOwnProfile ? 'Add a short bio so people know more about you.' : 'This student has not added a bio yet.')}
+          </p>
+        </div>
+
+        <dl className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border pt-4 text-sm">
+          <div className="flex items-baseline gap-1.5">
+            <dt className="text-foreground-muted">Posts</dt>
+            <dd className="font-semibold text-foreground">{stats.posts || 0}</dd>
+          </div>
+          <Link href={`/profile/${user.id}/followers`} className="group inline-flex min-h-11 items-center gap-1.5 rounded-control px-1">
+            <dt className="text-foreground-muted group-hover:text-foreground">Followers</dt>
+            <dd className="font-semibold text-foreground group-hover:text-brand-strong">{stats.followers || 0}</dd>
+          </Link>
+          <Link href={`/profile/${user.id}/following`} className="group inline-flex min-h-11 items-center gap-1.5 rounded-control px-1">
+            <dt className="text-foreground-muted group-hover:text-foreground">Following</dt>
+            <dd className="font-semibold text-foreground group-hover:text-brand-strong">{stats.following || 0}</dd>
+          </Link>
+        </dl>
       </div>
-    </Card>
+    </section>
   );
 }

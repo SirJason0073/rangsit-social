@@ -11,7 +11,14 @@ export function getPool() {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
-      connectionLimit: 10,
+      waitForConnections: true,
+      connectionLimit: 5,
+      maxIdle: 5,
+      idleTimeout: 60000,
+      queueLimit: 0,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0,
+      connectTimeout: 10000,
       ssl: { rejectUnauthorized: true },
     });
   }

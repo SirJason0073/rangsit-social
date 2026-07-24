@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import BrandLogo from './BrandLogo';
+import PageTransition from './PageTransition';
 import ThemeToggle from './ui/ThemeToggle';
 
 export default function GuestShell({ children }) {
@@ -18,8 +19,8 @@ export default function GuestShell({ children }) {
           </div>
         </div>
       </header>
-      <main id="main-content" className="container flex min-h-[calc(100dvh-var(--header-height))] items-center py-page-y" tabIndex="-1">
-        {children}
+      <main id="main-content" className="container flex min-h-[calc(100dvh-var(--header-height))] items-start py-page-y lg:items-center" tabIndex="-1">
+        <PageTransition>{children}</PageTransition>
       </main>
     </div>
   );

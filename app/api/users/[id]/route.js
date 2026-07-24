@@ -15,33 +15,45 @@ export async function GET(req, { params }) {
     const userId = user?.id || 0;
     const { searchParams } = new URL(req.url);
     const { page, limit, offset } = getPagination(searchParams);
+    const includePosts = searchParams.get('includePosts') !== 'false';
 
-    const users = await query(
-      `SELECT id, email, first_name, last_name, username, birthday, bio, avatar, profile_completed, created_at
-       FROM users WHERE id = ?`,
-      [params.id]
-    );
+    const [users, savedPostsAvailable] = await Promise.all([
+      query(
+        `SELECT u.id, u.email, u.first_name, u.last_name, u.username, u.birthday, u.bio, u.avatar,
+          u.profile_completed, u.created_at,
+          (SELECT COUNT(*) FROM follows WHERE following_id = u.id) AS follower_count,
+          (SELECT COUNT(*) FROM follows WHERE follower_id = u.id) AS following_count,
+          EXISTS(
+            SELECT 1 FROM follows
+            WHERE follower_id = ? AND following_id = u.id
+          ) AS is_following,
+          (SELECT COUNT(*) FROM posts WHERE user_id = u.id) AS post_count
+         FROM users u
+         WHERE u.id = ?`,
+        [userId, params.id]
+      ),
+      includePosts ? hasTable('saved_posts') : Promise.resolve(false)
+    ]);
     const profile = users[0];
     if (!profile) {
       return NextResponse.json({ message: 'User not found.' }, { status: 404 });
     }
 
-    const followers = await query('SELECT COUNT(*) AS count FROM follows WHERE following_id = ?', [params.id]);
-    const following = await query('SELECT COUNT(*) AS count FROM follows WHERE follower_id = ?', [params.id]);
-    const isFollowing = await query(
-      'SELECT COUNT(*) AS count FROM follows WHERE follower_id = ? AND following_id = ?',
-      [userId, params.id]
-    );
-    const postTotals = await query('SELECT COUNT(*) AS count FROM posts WHERE user_id = ?', [params.id]);
-    const totalPosts = toCountNumber(postTotals[0]?.count);
-    const savedPostsAvailable = await hasTable('saved_posts');
+    const {
+      follower_count: followerCount,
+      following_count: followingCount,
+      is_following: isFollowing,
+      post_count: postCount,
+      ...publicProfile
+    } = profile;
+    const totalPosts = toCountNumber(postCount);
     const savedSelect = savedPostsAvailable
       ? '(SELECT COUNT(*) FROM saved_posts WHERE post_id = posts.id AND user_id = ?) AS saved'
       : '0 AS saved';
     const safeLimit = Number(limit);
     const safeOffset = Number(offset);
 
-    const posts = await query(
+    const posts = includePosts ? await query(
       `SELECT posts.id, posts.user_id, posts.content, posts.media_url, posts.media_type, posts.created_at, posts.updated_at,
         users.first_name, users.last_name, users.username, users.avatar AS author_avatar,
         (SELECT COUNT(*) FROM likes WHERE post_id = posts.id) AS like_count,
@@ -56,14 +68,14 @@ export async function GET(req, { params }) {
       savedPostsAvailable
         ? [userId, userId, params.id]
         : [userId, params.id]
-    );
+    ) : [];
 
     return NextResponse.json(toJSONSafe({
-      user: profile,
+      user: publicProfile,
       stats: {
-        followers: toCountNumber(followers[0]?.count),
-        following: toCountNumber(following[0]?.count),
-        isFollowing: !!isFollowing[0]?.count
+        followers: toCountNumber(followerCount),
+        following: toCountNumber(followingCount),
+        isFollowing: Boolean(isFollowing)
       },
       posts,
       pagination: {

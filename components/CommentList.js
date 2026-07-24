@@ -8,10 +8,11 @@ import { Card } from './ui/Card';
 import { Skeleton, SkeletonText } from './ui/Skeleton';
 import ErrorState from './ui/ErrorState';
 
-export default function CommentList({ postId }) {
+export default function CommentList({ postId, initialComments }) {
   const { user } = useAuth();
-  const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const hasInitialComments = Array.isArray(initialComments);
+  const [comments, setComments] = useState(() => initialComments || []);
+  const [loading, setLoading] = useState(!hasInitialComments);
   const [error, setError] = useState('');
 
   async function loadComments() {
@@ -29,8 +30,9 @@ export default function CommentList({ postId }) {
   }
 
   useEffect(() => {
+    if (hasInitialComments) return;
     loadComments();
-  }, [postId]);
+  }, [hasInitialComments, postId]);
 
   async function handleAdd(content) {
     const res = await fetch(`/api/posts/${postId}/comments`, {
@@ -39,7 +41,20 @@ export default function CommentList({ postId }) {
       body: JSON.stringify({ content })
     });
     if (!res.ok) throw new Error('Comment failed');
-    await loadComments();
+    const data = await res.json();
+    setComments((current) => [
+      ...current,
+      {
+        id: data.id,
+        content,
+        created_at: new Date().toISOString(),
+        user_id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        username: user.username,
+        user_avatar: user.avatar
+      }
+    ]);
   }
 
   return (

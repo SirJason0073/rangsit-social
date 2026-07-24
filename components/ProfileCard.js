@@ -25,7 +25,7 @@ export default function ProfileCard({ user, href, compact = false }) {
 
   return (
     <Card className={compact ? 'p-4' : 'p-5'}>
-      {href ? <Link href={href} className="flex items-center gap-3 rounded-control focus-visible:outline-none">{content}</Link> : <div className="flex items-center gap-3">{content}</div>}
+      {href ? <Link href={href} className="flex min-h-11 items-center gap-3 rounded-control">{content}</Link> : <div className="flex items-center gap-3">{content}</div>}
     </Card>
   );
 }
