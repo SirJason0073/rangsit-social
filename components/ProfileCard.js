@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Avatar from './ui/Avatar';
-import Badge from './ui/Badge';
 import { Card } from './ui/Card';
 
 function displayName(user) {
@@ -19,7 +18,6 @@ export default function ProfileCard({ user, href, compact = false }) {
           {user?.profile_completed ? `@${user.username || 'student'}` : 'Profile setup required'}
         </span>
       </span>
-      {!compact ? <Badge tone={user?.profile_completed ? 'success' : 'warning'}>{user?.profile_completed ? 'Complete' : 'Setup'}</Badge> : null}
     </>
   );
 

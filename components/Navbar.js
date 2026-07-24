@@ -75,14 +75,18 @@ export default function Navbar() {
             })}
           </nav>
 
-          <form role="search" onSubmit={handleSearch} className="relative w-full max-w-md">
-            <Icon name="search" size="sm" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
+          <form
+            role="search"
+            onSubmit={handleSearch}
+            className="flex min-h-10 w-full max-w-md items-center gap-3 rounded-control border border-border-strong bg-surface-muted px-4 transition duration-fast focus-within:border-focus focus-within:ring-2 focus-within:ring-focus/20"
+          >
+            <Icon name="search" size="sm" className="pointer-events-none shrink-0 text-foreground-muted" />
             <input
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search Rangsit Social"
-              className="input h-10 min-h-10 bg-surface-muted pl-10"
+              className="h-10 min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-foreground outline-none placeholder:text-foreground-muted"
               aria-label="Search Rangsit Social"
             />
           </form>
