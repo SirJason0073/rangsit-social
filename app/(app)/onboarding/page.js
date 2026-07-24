@@ -8,7 +8,7 @@ import { useAuth } from '@/components/Providers';
 import { uploadProfileImage } from '@/utils/upload-client';
 import Button from '@/components/ui/Button';
 import { Card, SubtlePanel } from '@/components/ui/Card';
-import { FieldHint, FieldLabel, TextArea, TextInput } from '@/components/ui/Field';
+import { FieldError, FieldHint, FieldLabel, TextArea, TextInput, UploadControl } from '@/components/ui/Field';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -24,6 +24,9 @@ export default function OnboardingPage() {
   const [previewUrl, setPreviewUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [uploadStep, setUploadStep] = useState('');
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     return () => {
@@ -35,43 +38,63 @@ export default function OnboardingPage() {
 
   function updateField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
+    setFieldErrors((prev) => ({ ...prev, [key]: '' }));
+    setError('');
   }
 
   function validateForm() {
-    if (!form.firstName.trim()) return 'First name is required.';
-    if (!form.lastName.trim()) return 'Last name is required.';
+    const errors = {};
+    if (!form.firstName.trim()) errors.firstName = 'Enter your first name.';
+    if (!form.lastName.trim()) errors.lastName = 'Enter your last name.';
     if (!/^[a-zA-Z0-9._]{3,30}$/.test(form.username.trim())) {
-      return 'Username must be 3-30 characters and use only letters, numbers, dots, or underscores.';
+      errors.username = 'Use 3-30 letters, numbers, dots, or underscores.';
     }
-    if (!form.birthday) return 'Birthday is required.';
-    if (form.bio.length > 255) return 'Bio must be 255 characters or fewer.';
-    if (!avatarFile) return 'Profile image is required.';
-    return '';
+    if (!form.birthday) errors.birthday = 'Choose your birthday.';
+    if (form.bio.length > 255) errors.bio = 'Keep your bio within 255 characters.';
+    if (!avatarFile) errors.avatar = 'Choose a profile photo.';
+    return errors;
   }
 
   function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setFieldErrors((prev) => ({ ...prev, avatar: 'Choose an image file.' }));
+      e.target.value = '';
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setFieldErrors((prev) => ({ ...prev, avatar: 'Choose an image smaller than 5 MB.' }));
+      e.target.value = '';
+      return;
+    }
     if (previewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(previewUrl);
     }
     setAvatarFile(file);
+    setFieldErrors((prev) => ({ ...prev, avatar: '' }));
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length) {
+      setFieldErrors(validationErrors);
+      const firstField = Object.keys(validationErrors)[0];
+      document.querySelector(`[name="${firstField}"]`)?.focus();
       return;
     }
     setLoading(true);
     setError('');
+    setUploadStep('Uploading profile photo');
+    setProgress(35);
 
     try {
       const uploadedAvatar = await uploadProfileImage(avatarFile);
+      setUploadStep('Saving your profile');
+      setProgress(75);
       const payload = new FormData();
       payload.append('firstName', form.firstName);
       payload.append('lastName', form.lastName);
@@ -91,9 +114,13 @@ export default function OnboardingPage() {
       }
 
       await refresh();
+      setUploadStep('Profile ready');
+      setProgress(100);
       router.push('/feed');
     } catch (err) {
       setError(err.message || 'Failed to complete onboarding.');
+      setUploadStep('');
+      setProgress(0);
     } finally {
       setLoading(false);
     }
@@ -139,8 +166,12 @@ export default function OnboardingPage() {
                 className="mt-2"
                 value={form.firstName}
                 onChange={(e) => updateField('firstName', e.target.value)}
+                aria-invalid={!!fieldErrors.firstName}
+                aria-describedby={fieldErrors.firstName ? 'onboarding-first-name-error' : undefined}
+                disabled={loading}
                 required
               />
+              <FieldError id="onboarding-first-name-error">{fieldErrors.firstName}</FieldError>
             </div>
             <div>
               <FieldLabel htmlFor="onboarding-last-name">Last name</FieldLabel>
@@ -151,8 +182,12 @@ export default function OnboardingPage() {
                 className="mt-2"
                 value={form.lastName}
                 onChange={(e) => updateField('lastName', e.target.value)}
+                aria-invalid={!!fieldErrors.lastName}
+                aria-describedby={fieldErrors.lastName ? 'onboarding-last-name-error' : undefined}
+                disabled={loading}
                 required
               />
+              <FieldError id="onboarding-last-name-error">{fieldErrors.lastName}</FieldError>
             </div>
           </div>
 
@@ -165,9 +200,13 @@ export default function OnboardingPage() {
               className="mt-2"
               value={form.username}
               onChange={(e) => updateField('username', e.target.value)}
+              aria-invalid={!!fieldErrors.username}
+              aria-describedby={fieldErrors.username ? 'onboarding-username-error' : 'onboarding-username-hint'}
+              disabled={loading}
               required
             />
-            <FieldHint>Use 3-30 letters, numbers, dots, or underscores.</FieldHint>
+            <FieldHint id="onboarding-username-hint">Use 3-30 letters, numbers, dots, or underscores.</FieldHint>
+            <FieldError id="onboarding-username-error">{fieldErrors.username}</FieldError>
           </div>
 
           <div>
@@ -179,8 +218,12 @@ export default function OnboardingPage() {
               type="date"
               value={form.birthday}
               onChange={(e) => updateField('birthday', e.target.value)}
+              aria-invalid={!!fieldErrors.birthday}
+              aria-describedby={fieldErrors.birthday ? 'onboarding-birthday-error' : undefined}
+              disabled={loading}
               required
             />
+            <FieldError id="onboarding-birthday-error">{fieldErrors.birthday}</FieldError>
           </div>
 
           <div>
@@ -191,9 +234,14 @@ export default function OnboardingPage() {
               className="mt-2"
               value={form.bio}
               onChange={(e) => updateField('bio', e.target.value)}
+              maxLength={255}
+              aria-invalid={!!fieldErrors.bio}
+              aria-describedby={fieldErrors.bio ? 'onboarding-bio-error' : 'onboarding-bio-hint'}
+              disabled={loading}
               placeholder="Tell other students what you study, create, or care about."
             />
-            <FieldHint>{form.bio.length}/255 characters</FieldHint>
+            <FieldHint id="onboarding-bio-hint">{form.bio.length}/255 characters</FieldHint>
+            <FieldError id="onboarding-bio-error">{fieldErrors.bio}</FieldError>
           </div>
 
           <SubtlePanel className="rounded-panel border-dashed border-border p-5">
@@ -204,7 +252,20 @@ export default function OnboardingPage() {
               </div>
               <span className="badge">Image only</span>
             </div>
-            <input id="onboarding-avatar" name="avatar" className="input mt-2" type="file" accept="image/*" onChange={handleFileChange} required />
+            <UploadControl
+              id="onboarding-avatar"
+              name="avatar"
+              className="mt-3"
+              accept="image/*"
+              label={avatarFile ? avatarFile.name : 'Choose a profile photo'}
+              hint="JPG, PNG, or WebP up to 5 MB"
+              onChange={handleFileChange}
+              aria-invalid={!!fieldErrors.avatar}
+              aria-describedby={fieldErrors.avatar ? 'onboarding-avatar-error' : undefined}
+              disabled={loading}
+              required
+            />
+            <FieldError id="onboarding-avatar-error">{fieldErrors.avatar}</FieldError>
             {previewUrl && (
               <div className="mt-4 flex items-center gap-4 rounded-panel border border-border bg-surface-elevated p-4">
                 <img
@@ -223,11 +284,29 @@ export default function OnboardingPage() {
           </SubtlePanel>
 
           {error && <p role="alert" aria-live="polite" className="text-sm text-danger">{error}</p>}
+          {loading ? (
+            <div className="space-y-2" role="status" aria-live="polite">
+              <div className="flex items-center justify-between text-xs font-medium text-foreground-secondary">
+                <span>{uploadStep}</span>
+                <span>{progress}%</span>
+              </div>
+              <div
+                className="h-2 overflow-hidden rounded-full bg-surface-muted"
+                role="progressbar"
+                aria-label={uploadStep}
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow={progress}
+              >
+                <div className="h-full rounded-full bg-brand transition-all duration-normal" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+          ) : null}
 
           <div className="flex items-center justify-between gap-4 border-t border-border pt-2">
-            <p className="text-xs text-foreground-muted">You can update your profile later by extending the profile settings flow.</p>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : 'Finish setup'}
+            <p className="text-xs text-foreground-muted">You can update these details later from Edit profile.</p>
+            <Button type="submit" loading={loading} loadingLabel="Finishing setup">
+              Finish setup
             </Button>
           </div>
         </Card>

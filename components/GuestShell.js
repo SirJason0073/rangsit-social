@@ -4,9 +4,9 @@ import ThemeToggle from './ui/ThemeToggle';
 
 export default function GuestShell({ children }) {
   return (
-    <div className="app-shell">
+    <div className="app-shell guest-shell">
       <a href="#main-content" className="skip-link">Skip to content</a>
-      <header className="border-b border-border bg-surface-elevated shadow-1">
+      <header className="border-b border-border bg-surface-elevated/95">
         <div className="container flex min-h-header items-center justify-between gap-4 py-3">
           <BrandLogo />
           <div className="flex items-center gap-2">
@@ -18,7 +18,9 @@ export default function GuestShell({ children }) {
           </div>
         </div>
       </header>
-      <main id="main-content" className="container min-h-[calc(100dvh-var(--header-height))] py-page-y" tabIndex="-1">{children}</main>
+      <main id="main-content" className="container flex min-h-[calc(100dvh-var(--header-height))] items-center py-page-y" tabIndex="-1">
+        {children}
+      </main>
     </div>
   );
 }

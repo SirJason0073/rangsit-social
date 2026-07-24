@@ -188,6 +188,50 @@ body {
   min-height: 100dvh;
 }
 
+.guest-shell {
+  background:
+    radial-gradient(circle at 12% 20%, rgb(var(--color-brand) / 0.1), transparent 28rem),
+    radial-gradient(circle at 90% 85%, rgb(var(--color-accent) / 0.08), transparent 24rem),
+    rgb(var(--color-canvas));
+}
+
+.auth-layout {
+  display: grid;
+  width: 100%;
+  gap: var(--space-6);
+  padding-block: var(--space-4);
+}
+
+.auth-hero {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-panel);
+  background:
+    radial-gradient(circle at 100% 100%, rgb(var(--color-focus) / 0.7), transparent 45%),
+    linear-gradient(145deg, rgb(var(--color-brand-strong)), rgb(var(--color-accent)));
+  padding: clamp(2rem, 5vw, 4.5rem);
+  box-shadow: var(--elevation-2);
+}
+
+.auth-hero::after {
+  content: "";
+  position: absolute;
+  right: -6rem;
+  bottom: -7rem;
+  width: 18rem;
+  height: 18rem;
+  border: 1px solid rgb(var(--color-text-inverse) / 0.15);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3rem rgb(var(--color-text-inverse) / 0.04), 0 0 0 6rem rgb(var(--color-text-inverse) / 0.03);
+}
+
+.auth-form-card {
+  width: 100%;
+  max-width: 31rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
 .app-main {
   min-height: calc(100dvh - var(--header-height));
   padding-block: var(--space-page-y);
@@ -353,6 +397,12 @@ body {
 
 @media (min-width: 1024px) {
   .app-main { padding-bottom: var(--space-page-y); }
+  .auth-layout {
+    grid-template-columns: minmax(0, 1.08fr) minmax(25rem, 0.92fr);
+    min-height: min(46rem, calc(100dvh - var(--header-height) - (var(--space-page-y) * 2)));
+    align-items: stretch;
+    gap: clamp(2rem, 4vw, 5rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
